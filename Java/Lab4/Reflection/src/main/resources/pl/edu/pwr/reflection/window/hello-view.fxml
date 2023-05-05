@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="597.0" prefWidth="956.0" spacing="20.0" style="-fx-background-color: #b8d0eb" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.reflection.window.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane fx:id="ap" prefHeight="581.0" prefWidth="858.0">
+         <children>
+            <TextField fx:id="chosenFolderTextField" editable="false" layoutY="34.0" prefHeight="26.0" prefWidth="710.0" />
+            <Button fx:id="chooseFolderButton" layoutX="725.0" layoutY="34.0" mnemonicParsing="false" onAction="#onChooseDirectoryClick" prefHeight="26.0" prefWidth="185.0" text="Choose folder" />
+            <ListView fx:id="classesListView" layoutX="1.0" layoutY="99.0" onMouseClicked="#onListViewClick" prefHeight="447.0" prefWidth="390.0" />
+            <Label layoutX="1.0" layoutY="14.0" prefHeight="18.0" prefWidth="200.0" text="Selected folder" />
+            <Label layoutX="1.0" layoutY="74.0" prefHeight="18.0" prefWidth="200.0" text="Available classes" />
+            <Button fx:id="loadClassButton" layoutX="405.0" layoutY="99.0" mnemonicParsing="false" onAction="#loadClass" prefHeight="26.0" prefWidth="243.0" text="Load class" />
+            <Button fx:id="unloadClassButton" layoutX="666.0" layoutY="99.0" mnemonicParsing="false" onAction="#unloadClass" prefHeight="26.0" prefWidth="243.0" text="Unload class" />
+            <Button fx:id="getInfoButton" layoutX="405.0" layoutY="252.0" mnemonicParsing="false" onAction="#getInfo" prefHeight="26.0" prefWidth="227.0" text="Get info" />
+            <Label layoutX="409.0" layoutY="136.0" prefHeight="18.0" prefWidth="68.0" text="Info" />
+            <TextArea fx:id="infoTextArea" editable="false" layoutX="405.0" layoutY="167.0" prefHeight="63.0" prefWidth="505.0" />
+            <TextField fx:id="parametersTextField" layoutX="405.0" layoutY="316.0" prefHeight="26.0" prefWidth="506.0" />
+            <Label layoutX="404.0" layoutY="287.0" prefHeight="18.0" prefWidth="108.0" text="Parameters" />
+            <Label layoutX="404.0" layoutY="346.0" prefHeight="18.0" prefWidth="170.0" text="Result" />
+            <TextArea fx:id="resultTextArea" editable="false" layoutX="404.0" layoutY="373.0" prefHeight="63.0" prefWidth="506.0" />
+            <Button fx:id="workButton" layoutX="405.0" layoutY="475.0" mnemonicParsing="false" onAction="#work" prefHeight="26.0" prefWidth="227.0" text="Work" />
+            <Label fx:id="messageLabel" layoutX="404.0" layoutY="525.0" prefHeight="18.0" prefWidth="506.0" />
+            <Label fx:id="statusLabel" layoutX="404.0" layoutY="445.0" prefHeight="18.0" prefWidth="506.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

@@ -1,0 +1,19 @@
+.popover {
+  background-color: #c9ddff;
+  padding: 3px;
+}
+
+.popover-header {
+  margin-top: 3px;
+  background-color: #f2f9f7;
+  font-size: 28px;
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 0px;
+}
+
+.popover-body {
+  margin-top: 8px;
+  background-color: #f2f9f7;
+  padding: 15px;
+}

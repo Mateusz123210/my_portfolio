@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="483.0" prefWidth="778.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.musicwebappboundles.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane prefHeight="462.0" prefWidth="738.0">
+         <children>
+            <ComboBox fx:id="authorComboBox" layoutX="41.0" layoutY="61.0" prefHeight="26.0" prefWidth="263.0" />
+            <Label fx:id="chooseAuthorLabel" layoutX="41.0" layoutY="33.0" prefHeight="18.0" prefWidth="186.0" />
+            <Label fx:id="recordQuestionLabel" layoutX="227.0" layoutY="119.0" prefHeight="18.0" prefWidth="279.0" />
+            <TextField fx:id="recordAnswer" layoutX="227.0" layoutY="155.0" prefHeight="26.0" prefWidth="94.0" />
+            <Button fx:id="recordSubmitButton" layoutX="353.0" layoutY="155.0" mnemonicParsing="false" onAction="#submitAnswer" prefHeight="26.0" prefWidth="155.0" />
+            <Label fx:id="recordValidAnswer" layoutX="227.0" layoutY="203.0" prefHeight="18.0" prefWidth="320.0" />
+            <Slider fx:id="languageSlider" blockIncrement="1.0" layoutX="558.0" layoutY="54.0" majorTickUnit="1.0" max="1.0" minorTickCount="0" onMouseReleased="#setLanguage" showTickMarks="true" snapToTicks="true" />
+            <Label fx:id="languageLabel" layoutX="558.0" layoutY="25.0" prefHeight="18.0" prefWidth="140.0" />
+            <Label fx:id="secondQuestionLabel" layoutX="229.0" layoutY="283.0" prefHeight="18.0" prefWidth="279.0" />
+            <TextField fx:id="secondQuestionTextField" layoutX="227.0" layoutY="320.0" prefHeight="26.0" prefWidth="93.0" />
+            <Button fx:id="secondQuestionButton" layoutX="353.0" layoutY="320.0" mnemonicParsing="false" onAction="#submitAnswer2" prefHeight="26.0" prefWidth="155.0" />
+            <Label fx:id="secondQuestionAnswerLabel" layoutX="227.0" layoutY="355.0" prefHeight="18.0" prefWidth="339.0" />
+         </children></AnchorPane>
+   </children>
+</VBox>

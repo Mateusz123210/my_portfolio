@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="doJlink">
+  <target name="doJlink">
+    <link debug="false" compress="2" destDir="C:\Users\mateu\Desktop\Java2023\releases\maturb808_javata_2023\Lab3" includeHeaders="true" includeManPages="true" modulepath="C:\Users\mateu\.jdks\openjdk-19.0.2/jmods;C:\Users\mateu\Desktop\Java2023\sources\maturb808_javata_2023\Lab3\MusicWebAppBoundles\target\MusicWebAppBoundles-1.0-SNAPSHOT.jar;C:\Users\mateu\Desktop\Java2023\javafx-jmods-19.0.2.1">
+      <module name="pl.edu.pwr.musicwebappboundles" />
+      <module name="jdk.crypto.ec" />
+      <module name="jdk.crypto.cryptoki" />
+    </link>
+  </target>
+</project>

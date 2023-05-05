@@ -1,0 +1,10 @@
+﻿.book-header{
+    cursor: pointer;
+    border-radius: 20px;
+    border: 1px solid white;
+}
+
+.book-header:hover{
+    cursor: pointer;
+    border: 1px solid silver;
+}

@@ -1,0 +1,86 @@
+html, body{
+  height: 100%;
+}
+
+#root{
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  height: 100vh;
+}
+
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  margin: 0;
+}
+
+.ellipse-back {
+  position: fixed;
+  width: 197px;
+  height: 91px;
+  left: 20px;
+  bottom: 20px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background: #d9d9d9;
+  z-index: 10000;
+}
+
+.ellipse-back:hover {
+  cursor: pointer;
+  background: #afabab;
+}
+
+.left-arrow-line {
+  box-sizing: border-box;
+  position: absolute;
+  width: 46px;
+  height: 0px;
+  left: 10px;
+  top: 39px;
+  background-color: #000000;
+  border: 3px solid #000000;
+  transform: rotate(-180deg);
+}
+
+.left-arrow-up {
+  box-sizing: border-box;
+  position: absolute;
+  width: 23px;
+  height: 0px;
+  left: 5px;
+  top: 45px;
+  background-color: #000000;
+  border: 3px solid #000000;
+  transform: rotate(50deg);
+}
+
+.left-arrow-down {
+  box-sizing: border-box;
+  position: absolute;
+  width: 23px;
+  height: 0px;
+  left: 5px;
+  top: 32px;
+  background-color: #000000;
+  border: 3px solid #000000;
+  transform: rotate(-50deg);
+}
+
+.ellipse-text {
+  position: absolute;
+  width: 102px;
+  height: 59px;
+  left: 70px;
+  top: 15px;
+
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  display: flex;
+  align-items: center;
+
+  color: #000000;
+}

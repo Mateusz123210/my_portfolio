@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="480.0" prefWidth="640.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.filesmd5snapshotapplication.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <AnchorPane fx:id="ap" prefHeight="475.0" prefWidth="600.0">
+      <children>
+          <Label fx:id="directoryText" layoutX="14.0" prefHeight="39.0" prefWidth="172.0" text="Chosen directory" />
+         <TextField fx:id="directoryTextField" editable="false" layoutX="14.0" layoutY="33.0" prefHeight="26.0" prefWidth="455.0" />
+          <Button layoutX="479.0" layoutY="33.0" onAction="#onChooseDirectoryClick" text="Choose directory" />
+         <Label layoutX="13.0" layoutY="71.0" text="Messages" />
+         <TextField fx:id="messagesTextField" editable="false" layoutX="14.0" layoutY="97.0" prefHeight="26.0" prefWidth="571.0" />
+         <TextField fx:id="errorsTextField" editable="false" layoutX="14.0" layoutY="158.0" prefHeight="26.0" prefWidth="571.0" />
+         <Label layoutX="14.0" layoutY="134.0" text="Errors" />
+         <Label layoutX="16.0" layoutY="196.0" text="Changes" />
+         <TextArea fx:id="changesTextArea" editable="false" layoutX="19.0" layoutY="219.0" prefHeight="207.0" prefWidth="571.0" />
+         <Button fx:id="repeatCheckButton" layoutX="413.0" layoutY="427.0" onAction="#onRepeatCheckClick" mnemonicParsing="false" prefHeight="26.0" prefWidth="172.0" text="Repeat check" />
+      </children>
+   </AnchorPane>
+</VBox>

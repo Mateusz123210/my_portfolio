@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #eff1f3" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.clientinterface.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane fx:id="ap" prefHeight="579.0" prefWidth="860.0">
+         <children>
+            <TextField fx:id="chooseFileTextField" layoutX="31.0" layoutY="37.0" prefHeight="26.0" prefWidth="680.0" />
+            <Button fx:id="chooseFileButton" layoutX="719.0" layoutY="37.0" mnemonicParsing="false" onAction="#chooseFile" prefHeight="26.0" prefWidth="123.0" text="Choose" />
+            <Label layoutX="31.0" layoutY="14.0" prefHeight="18.0" prefWidth="190.0" text="Choose file" />
+            <Button layoutX="31.0" layoutY="507.0" mnemonicParsing="false" onAction="#getDataFromFile" prefHeight="26.0" prefWidth="206.0" text="Get data from file" />
+            <Button layoutX="263.0" layoutY="507.0" mnemonicParsing="false" onAction="#saveDataToFile" prefHeight="26.0" prefWidth="216.0" text="Save data to file" />
+            <Button layoutX="500.0" layoutY="507.0" mnemonicParsing="false" onAction="#calculate" prefHeight="26.0" prefWidth="163.0" text="Calculate" />
+            <TextField fx:id="resultTextField" editable="false" layoutX="501.0" layoutY="471.0" prefHeight="26.0" prefWidth="346.0" />
+            <ListView fx:id="availableServicesListView" layoutX="501.0" layoutY="103.0" prefHeight="334.0" prefWidth="346.0" />
+            <Label layoutX="31.0" layoutY="76.0" prefHeight="18.0" prefWidth="142.0" text="Confusion matrix" />
+            <Label layoutX="501.0" layoutY="77.0" prefHeight="18.0" prefWidth="222.0" text="Available services" />
+            <Label layoutX="507.0" layoutY="452.0" prefHeight="18.0" prefWidth="75.0" text="Result" />
+            <Label fx:id="messageLabel" layoutX="31.0" layoutY="546.0" prefHeight="18.0" prefWidth="817.0" />
+            <TextArea fx:id="matrixTextArea" layoutX="63.0" layoutY="137.0" prefHeight="334.0" prefWidth="414.0" />
+            <Label layoutX="192.0" layoutY="111.0" prefHeight="18.0" prefWidth="150.0" text="Predicted classification" />
+            <Label layoutX="-37.0" layoutY="281.0" prefHeight="26.0" prefWidth="163.0" rotate="270.0" text="Actual classification" />
+            <Button fx:id="getResultButton" layoutX="682.0" layoutY="507.0" mnemonicParsing="false" onAction="#getResult" prefHeight="26.0" prefWidth="163.0" text="Get result" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

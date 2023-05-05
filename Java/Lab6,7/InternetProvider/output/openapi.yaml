@@ -1,0 +1,609 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:9000
+  description: Generated server url
+tags:
+- name: Installation controller
+  description: Endpoints connected with installations
+- name: Payment controller
+  description: Endpoints connected with payments
+- name: Service controller
+  description: Endpoints connected with services
+- name: Client controller
+  description: Endpoints connected with clients
+- name: Charge controller
+  description: Endpoints connected with charges
+paths:
+  /service/update:
+    put:
+      tags:
+      - Service controller
+      summary: Update service
+      description: Changing data of service using service id and new params
+      operationId: updateService
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: price
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Service updated
+          content:
+            '*/*':
+              schema:
+                type: string
+  /payment/update:
+    put:
+      tags:
+      - Payment controller
+      summary: Update payment
+      description: "Changing installation payment using installation id, payment id\
+        \ and new params"
+      operationId: updateInstallationPayment
+      parameters:
+      - name: paymentId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: price
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: installationId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Payment updated
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /installation/update:
+    put:
+      tags:
+      - Installation controller
+      summary: Update client installation
+      description: Changing client installation using new params
+      operationId: updateInstallation
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: address
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: routerNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: serviceId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: clientId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Installation updated
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /client/update:
+    put:
+      tags:
+      - Client controller
+      summary: Update client
+      description: Changing name and surname of client using id
+      operationId: updateClient
+      parameters:
+      - name: number
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: surname
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Client updated
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /service/add:
+    post:
+      tags:
+      - Service controller
+      summary: Add service
+      description: Adding service using type and price
+      operationId: addService
+      parameters:
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: price
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Service added
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /payment/add:
+    post:
+      tags:
+      - Payment controller
+      summary: Add payment
+      description: Adding payment to specified installation using installation id
+        and payment params
+      operationId: addInstallationPayment
+      parameters:
+      - name: date
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: price
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: installationId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Payment added
+          content:
+            '*/*':
+              schema:
+                type: string
+  /installation/add:
+    post:
+      tags:
+      - Installation controller
+      summary: Add installation
+      description: Adding installation to specified client using client id and installation
+        params
+      operationId: addInstallation
+      parameters:
+      - name: address
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: routerNumber
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: serviceId
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: clientId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Installation added
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /client/add:
+    post:
+      tags:
+      - Client controller
+      summary: Add client
+      description: Adding client with specified name and surname
+      operationId: addClient
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: surname
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Client added
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /service/get/{id}:
+    get:
+      tags:
+      - Service controller
+      summary: Get service by id
+      description: Get service using id
+      operationId: getClientData
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Service fetched
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /service/all:
+    get:
+      tags:
+      - Service controller
+      summary: Get all services
+      description: Get data about all available services
+      operationId: getAllServices
+      responses:
+        "200":
+          description: All services fetched
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Service'
+  /payment/get/{installation-id}:
+    get:
+      tags:
+      - Payment controller
+      summary: Get installation payments
+      description: Fetching all installation payments using installation id
+      operationId: getInstallationPayments
+      parameters:
+      - name: installation-id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Installation payments fetched
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /installation/get/{id}:
+    get:
+      tags:
+      - Installation controller
+      summary: Get client installations
+      description: Fetching all client installations using client id
+      operationId: getInstallationData
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Client installations fetched
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /client/get/{id}:
+    get:
+      tags:
+      - Client controller
+      summary: Get client using id
+      description: Fetching data of specified client using id
+      operationId: getClientData_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Client fetched
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /client/all:
+    get:
+      tags:
+      - Client controller
+      summary: Get all clients
+      description: Fetching data of all clients
+      operationId: getAllClientsData
+      responses:
+        "200":
+          description: Clients fetched
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+  /charge/get/{installation-id}:
+    get:
+      tags:
+      - Charge controller
+      summary: Get installation charges
+      description: Fetching data of all charges of installation using id
+      operationId: getInstallationCharges
+      parameters:
+      - name: installation-id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Installation charges fetched
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /service/delete:
+    delete:
+      tags:
+      - Service controller
+      summary: Delete service
+      description: Deleting service using id
+      operationId: deleteService
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Service deleted
+          content:
+            '*/*':
+              schema:
+                type: string
+  /payment/delete:
+    delete:
+      tags:
+      - Payment controller
+      summary: Delete payment
+      description: Deleting payment using id
+      operationId: deleteInstallationPayment
+      parameters:
+      - name: paymentId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Payment deleted
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /installation/delete:
+    delete:
+      tags:
+      - Installation controller
+      summary: Delete installation
+      description: Delete installation using id
+      operationId: deleteInstallation
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Installation deleted
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+  /client/delete:
+    delete:
+      tags:
+      - Client controller
+      summary: Delete client
+      description: Deleting client using id
+      operationId: deleteClient
+      parameters:
+      - name: clientId
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid params given
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Client deleted
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        type:
+          type: string
+        price:
+          type: number
+          format: float
+    Client:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+        name:
+          type: string
+        surname:
+          type: string

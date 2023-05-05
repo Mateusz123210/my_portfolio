@@ -1,0 +1,15 @@
+html,
+body {
+  height: 100%;
+}
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+body {
+  font-family: "Source Sans Pro", sans-serif;
+  margin: 0;
+}

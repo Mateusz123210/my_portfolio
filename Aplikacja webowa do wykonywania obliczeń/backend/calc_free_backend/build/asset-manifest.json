@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.1ffe6e75.css",
+    "main.js": "/static/js/main.8bd9b2b1.js",
+    "static/media/example_quick_sort.png": "/static/media/example_quick_sort.6305accddd2f14108e8a.png",
+    "static/media/example_bubble_sort.png": "/static/media/example_bubble_sort.c62b39b901c2981f01b3.png",
+    "static/media/example_square.png": "/static/media/example_square.7f0eff9d4a43b1ba23ec.png",
+    "static/media/example_linear.png": "/static/media/example_linear.f5a1d33cd3f6ce361a5e.png",
+    "static/media/example_distance.png": "/static/media/example_distance.57f2dc6116a93c5d468c.png",
+    "static/media/example_triangle.png": "/static/media/example_triangle.e0815ec02c2949695678.png",
+    "index.html": "/index.html",
+    "main.1ffe6e75.css.map": "/static/css/main.1ffe6e75.css.map",
+    "main.8bd9b2b1.js.map": "/static/js/main.8bd9b2b1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1ffe6e75.css",
+    "static/js/main.8bd9b2b1.js"
+  ]
+}

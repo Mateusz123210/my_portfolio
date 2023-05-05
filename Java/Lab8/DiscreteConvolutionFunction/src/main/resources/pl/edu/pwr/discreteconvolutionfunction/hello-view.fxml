@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="650.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.discreteconvolutionfunction.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane fx:id="ap" prefHeight="538.0" prefWidth="560.0">
+         <children>
+            <Label layoutX="14.0" layoutY="27.0" prefHeight="18.0" prefWidth="309.0" text="File with data (x)" />
+            <TextField fx:id="dataTextField" editable="false" layoutX="12.0" layoutY="58.0" prefHeight="26.0" prefWidth="514.0" />
+            <Button fx:id="dataChooseButton" layoutX="540.0" layoutY="58.0" mnemonicParsing="false" onAction="#chooseData" text="Choose" />
+            <Label layoutX="14.0" layoutY="101.0" prefHeight="18.0" prefWidth="366.0" text="File with kernel (h)" />
+            <TextField fx:id="kernelTextField" editable="false" layoutX="14.0" layoutY="134.0" prefHeight="26.0" prefWidth="514.0" />
+            <Button fx:id="kernelChooseButton" layoutX="540.0" layoutY="134.0" mnemonicParsing="false" onAction="#chooseKernel" text="Choose" />
+            <Label layoutX="14.0" layoutY="260.0" prefHeight="18.0" prefWidth="87.0" text="Repetitions" />
+            <TextField fx:id="cRepetitions" layoutX="112.0" layoutY="256.0" prefHeight="26.0" prefWidth="113.0" />
+            <Label layoutX="14.0" layoutY="203.0" prefHeight="26.0" prefWidth="144.0" text="C++">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Button fx:id="cRun" layoutX="16.0" layoutY="302.0" mnemonicParsing="false" onAction="#runCPlusPlusMethod" prefHeight="26.0" prefWidth="210.0" text="Run" />
+            <Label layoutX="320.0" layoutY="203.0" prefHeight="35.0" prefWidth="87.0" text="Java">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="320.0" layoutY="260.0" prefHeight="18.0" prefWidth="87.0" text="Repetitions" />
+            <TextField fx:id="javaRepetitions" layoutX="415.0" layoutY="256.0" prefHeight="26.0" prefWidth="114.0" />
+            <Button fx:id="javaRun" layoutX="320.0" layoutY="302.0" mnemonicParsing="false" onAction="#runJavaMethod" prefHeight="26.0" prefWidth="210.0" text="Run" />
+            <Button fx:id="loadFilesButton" layoutX="220.0" layoutY="169.0" mnemonicParsing="false" onAction="#readDataFromFiles" prefHeight="26.0" prefWidth="144.0" text="Load files" />
+            <TextArea fx:id="result" editable="false" layoutX="16.0" layoutY="379.0" prefHeight="84.0" prefWidth="514.0" />
+            <Label layoutX="14.0" layoutY="347.0" prefHeight="18.0" prefWidth="137.0" text="Result" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>
