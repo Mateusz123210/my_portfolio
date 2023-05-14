@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.*?>
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #fcfcfc;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.xmlparsers.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <TabPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #f1f2f6;" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="JAXB">
+            <content>
+              <AnchorPane fx:id="ap" minHeight="0.0" minWidth="0.0" prefHeight="573.0" prefWidth="860.0">
+                     <children>
+                        <Label layoutX="35.0" layoutY="43.0" prefHeight="18.0" prefWidth="137.0" text="Choose XML file" />
+                        <TextField fx:id="chooseXMLFileTextFieldJAXB" editable="false" layoutX="35.0" layoutY="71.0" prefHeight="26.0" prefWidth="691.0" />
+                        <Button fx:id="chooseXMLFileButtonJAXB" layoutX="743.0" layoutY="71.0" mnemonicParsing="false" onAction="#chooseFile2" prefHeight="26.0" prefWidth="88.0" text="Choose" />
+                        <Button fx:id="serializeToXMLButton" layoutX="35.0" layoutY="127.0" mnemonicParsing="false" onAction="#serializeToXML" prefHeight="26.0" prefWidth="375.0" text="Serialize to XML" />
+                        <Button fx:id="deserializeFromXMLButton" layoutX="456.0" layoutY="127.0" mnemonicParsing="false" onAction="#deserializeFromXML" prefHeight="26.0" prefWidth="375.0" text="Deserialize from XML" />
+                        <Label layoutX="35.0" layoutY="181.0" prefHeight="18.0" prefWidth="166.0" text="Output" />
+                        <TextArea fx:id="JAXBOutputTextArea" editable="false" layoutX="35.0" layoutY="211.0" prefHeight="314.0" prefWidth="797.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="JAXP">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="564.0" prefWidth="860.0">
+                     <children>
+                        <Label layoutX="21.0" layoutY="36.0" prefHeight="18.0" prefWidth="162.0" text="Choose XML file" />
+                        <Label layoutX="21.0" layoutY="176.0" prefHeight="18.0" prefWidth="99.0" text="Output" />
+                        <Button fx:id="parseUsingDOMButton" layoutX="453.0" layoutY="126.0" mnemonicParsing="false" onAction="#parseUsingDOM" prefHeight="26.0" prefWidth="391.0" text="Parse using DOM" />
+                        <TextArea fx:id="outputTextArea" editable="false" layoutX="21.0" layoutY="201.0" prefHeight="323.0" prefWidth="826.0" />
+                        <Button fx:id="parseUsingSAXButton" layoutX="21.0" layoutY="126.0" mnemonicParsing="false" onAction="#parseUsingSAX" prefHeight="26.0" prefWidth="391.0" text="Parse using SAX" />
+                        <TextField fx:id="chooseXMLFileTextField" editable="false" layoutX="20.0" layoutY="74.0" prefHeight="26.0" prefWidth="706.0" />
+                        <Button fx:id="chooseXMLFileButton" layoutX="746.0" layoutY="74.0" mnemonicParsing="false" onAction="#chooseFile1" prefHeight="26.0" prefWidth="99.0" text="Choose" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="XSLT">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="564.0" prefWidth="860.0">
+                     <children>
+                        <Label layoutX="21.0" layoutY="14.0" prefHeight="18.0" prefWidth="146.0" text="Choose XML file" />
+                        <TextField fx:id="XMLChosenFile" editable="false" layoutX="22.0" layoutY="46.0" prefHeight="26.0" prefWidth="700.0" />
+                        <Button layoutX="736.0" layoutY="46.0" mnemonicParsing="false" onAction="#chooseFile3" prefHeight="26.0" prefWidth="105.0" text="Choose" />
+                        <Button layoutX="736.0" layoutY="116.0" mnemonicParsing="false" onAction="#chooseFile4" prefHeight="26.0" prefWidth="106.0" text="Choose" />
+                        <Label layoutX="21.0" layoutY="86.0" prefHeight="18.0" prefWidth="146.0" text="Choose XSLT file" />
+                        <TextField fx:id="XSLTChosenFile" editable="false" layoutX="22.0" layoutY="116.0" prefHeight="26.0" prefWidth="700.0" />
+                        <Button layoutX="256.0" layoutY="162.0" mnemonicParsing="false" onAction="#transformUsingXSLT" prefHeight="26.0" prefWidth="347.0" text="Parse" />
+                        <WebView fx:id="webView" layoutX="3.0" layoutY="202.0" prefHeight="312.0" prefWidth="852.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</VBox>
