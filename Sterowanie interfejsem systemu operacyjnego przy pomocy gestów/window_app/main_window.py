@@ -18,7 +18,6 @@ from controllers.system_controller import SystemController
 
 
 class MyComboBox(PyQt5.QtWidgets.QComboBox):
-    '''Class which ignore scroll mouse in QComboBox'''
 
     def __init__(self, scrollWidget=None, *args, **kwargs):
         super(PyQt5.QtWidgets.QComboBox, self).__init__(*args, **kwargs)
@@ -30,9 +29,10 @@ class MyComboBox(PyQt5.QtWidgets.QComboBox):
         pass
 
 
-class MyLabel(PyQt5.QtWidgets.QLabel,PyQt5.QtWidgets.QPushButton):
-    def __init__(self,win, parent=None):
+class MyLabel(PyQt5.QtWidgets.QLabel, PyQt5.QtWidgets.QPushButton):
+    def __init__(self, win, parent = None):
         super(MyLabel, self).__init__(parent)
+        self.absolute_path = None
         self.win = win
         self.setAutoFillBackground(True)
         p = self.palette()
@@ -40,8 +40,11 @@ class MyLabel(PyQt5.QtWidgets.QLabel,PyQt5.QtWidgets.QPushButton):
         self.setPalette(p)
         self.setMouseTracking(True)
         self.id = -1
-        self.name=""
+        self.name = ""
         self.videoWindow = QMainWindow()
+
+    def set_absolute_path(self, absolute_path):
+        self.absolute_path = absolute_path
 
     def mousePressEvent(self, ev: QtGui.QMouseEvent) -> None:
         if id != -1:
@@ -52,7 +55,7 @@ class MyLabel(PyQt5.QtWidgets.QLabel,PyQt5.QtWidgets.QPushButton):
             self.videoWindow.label.setFixedSize(270, 480)
             self.videoWindow.layout = QVBoxLayout()
             self.videoWindow.layout.addWidget(self.videoWindow.label)
-            self.videoWindow.movie = QMovie("gesture_videos/" + self.name + ".gif")
+            self.videoWindow.movie = QMovie(self.absolute_path + "/gesture_videos/" + self.name + ".gif")
             self.videoWindow.label.setMovie(self.videoWindow.movie)
             self.videoWindow.movie.start()
             self.videoWindow.wid.setLayout(self.videoWindow.layout)
@@ -69,7 +72,7 @@ class MyLabel(PyQt5.QtWidgets.QLabel,PyQt5.QtWidgets.QPushButton):
         pos_y = pos.y()
         if pos_y > y - 600:
             pos_y = y - 600
-        self.videoWindow.move(pos.x()+15,pos_y)
+        self.videoWindow.move(pos.x() + 15, pos_y)
 
     def set_name(self, name: str):
         self.name = name
@@ -92,16 +95,17 @@ class MyCheckBox(PyQt5.QtWidgets.QCheckBox):
 
 class Ui_main_window(QMainWindow):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, absolute_path):
+        self.absolute_path = absolute_path
+        super().__init__()      
         self.close_time = False
         self.nm = ActionNameMapper()
         self.name_mapper = NameMapper()
-        self.sys_cont = SystemController()
-        self.func_get = FunctionsGetter(self.sys_cont)
+        self.sys_cont = SystemController(self.absolute_path)
+        self.func_get = FunctionsGetter(self.sys_cont, self.absolute_path)
         self.cont = Controller(self.func_get, self.sys_cont, self)
         self.sys_cont.set_camera_reference(self.cont.get_camera_controller())
-
+        
     def get_geometry(self):
         return self.geometry()
 
@@ -113,22 +117,22 @@ class Ui_main_window(QMainWindow):
         self.camera_combo_box.clear()
         if len(temp) > 0:
             for a in temp:
-                self.camera_combo_box.addItem("Camera "+str(a))
+                self.camera_combo_box.addItem("Camera " + str(a))
             self.camera_combo_box.setCurrentText("Camera 0")
 
 
     def set_camera(self):
-        camera_text=self.camera_combo_box.currentText()
-        camera_number=int(camera_text[-1])
-        temp=self.cont.get_camera_controller().set_used_camera_number(camera_number)
+        camera_text = self.camera_combo_box.currentText()
+        camera_number = int(camera_text[-1])
+        temp = self.cont.get_camera_controller().set_used_camera_number(camera_number)
         if temp >= 0:
-            self.camera_combo_box.setCurrentText("Camera "+str(temp))
+            self.camera_combo_box.setCurrentText("Camera "+ str(temp))
 
     def open_documentation(self):
         self.documentation_window = QMainWindow()
         self.documentation_window.setWindowTitle("Handy-instruction")
         label = QtWidgets.QLabel(self.documentation_window)
-        pixmap = QPixmap('documentation.png')
+        pixmap = QPixmap(self.absolute_path + '/documentation.png')
         label.setPixmap(pixmap)
         label.setScaledContents(True)
         self.documentation_window.setCentralWidget(label)
@@ -158,7 +162,7 @@ class Ui_main_window(QMainWindow):
         self.authors_window.show()
 
     def get_config(self):
-        config = self.cont.get_camera().get_mapping().get_gestures_list()
+        config = self.cont.get_gesture_recognition().get_mapping().get_gestures_list()
         self.action1_comboBox.setCurrentText(self.nm.get_user_friendly_action_name(config.get(1)))
         self.action2_comboBox.setCurrentText(self.nm.get_user_friendly_action_name(config.get(2)))
         self.action3_comboBox.setCurrentText(self.nm.get_user_friendly_action_name(config.get(3)))
@@ -185,7 +189,7 @@ class Ui_main_window(QMainWindow):
         self.action25_comboBox.setCurrentText(self.nm.get_user_friendly_action_name(config.get(25)))
 
     def get_default_config(self):
-            self.cont.get_camera().get_mapping().read_default_configuration_from_file()
+            self.cont.get_gesture_recognition().get_mapping().read_default_configuration_from_file()
             self.get_config()
 
     def set_config(self):
@@ -215,7 +219,7 @@ class Ui_main_window(QMainWindow):
         dict[23] = self.nm.get_normal_action_name(self.action23_comboBox.currentText())
         dict[24] = self.nm.get_normal_action_name(self.action24_comboBox.currentText())
         dict[25] = self.nm.get_normal_action_name(self.action25_comboBox.currentText())
-        self.cont.get_camera().get_mapping().set_gesture(dict)
+        self.cont.get_gesture_recognition().get_mapping().set_gesture(dict)
 
     def get_controller(self):
         return self.cont
@@ -226,14 +230,15 @@ class Ui_main_window(QMainWindow):
     def close_application(self):
         self.close_time = True
         self.cont.get_camera_controller().release_camera()
-        self.cont.get_camera().get_mapping().end_thread()
+        self.cont.get_gesture_recognition().get_mapping().end_thread()
+        self.cont.stop_app()
         time.sleep(0.1)
         sys.exit(0)
 
     def set_cameras_combo_box(self, lst):
         self.camera_combo_box.clear()
         for a in lst:
-                self.camera_combo_box.addItem("Camera "+str(a))
+                self.camera_combo_box.addItem("Camera " + str(a))
 
     def set_button_to_start_mode(self):
         self.start_button.setStyleSheet("border-style:outset;\n"
@@ -465,12 +470,14 @@ class Ui_main_window(QMainWindow):
         self.mouse_right_button_vertical_layout.setSpacing(0)
         self.mouse_right_button_vertical_layout.setObjectName("mouse_right_button_vertical_layout")
         self.mouse_right_button_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.mouse_right_button_image_label.set_absolute_path(self.absolute_path)
         self.mouse_right_button_image_label.set_name("mouse_right_click")
         self.mouse_right_button_image_label.setMinimumSize(QtCore.QSize(120, 200))
         self.mouse_right_button_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.mouse_right_button_image_label.setText("")
         self.mouse_right_button_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.mouse_right_button_image_label.setPixmap(QtGui.QPixmap("./gesture_images/mouse_stering_gestures/click_right_button.png"))
+        self.mouse_right_button_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/mouse_stering_gestures/click_right_button.png"))
         self.mouse_right_button_image_label.setScaledContents(True)
         self.mouse_right_button_image_label.setObjectName("mouse_right_button_image_label")
         self.mouse_right_button_vertical_layout.addWidget(self.mouse_right_button_image_label)
@@ -499,12 +506,14 @@ class Ui_main_window(QMainWindow):
         self.mouse_left_button_vertical_layout.setSpacing(0)
         self.mouse_left_button_vertical_layout.setObjectName("mouse_left_button_vertical_layout")
         self.mouse_left_button_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.mouse_left_button_image_label.set_absolute_path(self.absolute_path)
         self.mouse_left_button_image_label.set_name("mouse_left_click")
         self.mouse_left_button_image_label.setMinimumSize(QtCore.QSize(120, 200))
         self.mouse_left_button_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.mouse_left_button_image_label.setText("")
         self.mouse_left_button_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.mouse_left_button_image_label.setPixmap(QtGui.QPixmap("./gesture_images/mouse_stering_gestures/click_left_button.png"))
+        self.mouse_left_button_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/mouse_stering_gestures/click_left_button.png"))
         self.mouse_left_button_image_label.setScaledContents(True)
         self.mouse_left_button_image_label.setObjectName("mouse_left_button_image_label")
         self.mouse_left_button_vertical_layout.addWidget(self.mouse_left_button_image_label)
@@ -531,12 +540,14 @@ class Ui_main_window(QMainWindow):
         self.turning_hand_counter_vertical_layout.setSpacing(0)
         self.turning_hand_counter_vertical_layout.setObjectName("turning_hand_counter_vertical_layout")
         self.turning_hand_counter_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.turning_hand_counter_image_label.set_absolute_path(self.absolute_path)
         self.turning_hand_counter_image_label.set_name("turning_hand_counterclockwise")
         self.turning_hand_counter_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.turning_hand_counter_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.turning_hand_counter_image_label.setText("")
         self.turning_hand_counter_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.turning_hand_counter_image_label.setPixmap(QtGui.QPixmap("./gesture_images/turning_hand_counterclockwise.png"))
+        self.turning_hand_counter_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/turning_hand_counterclockwise.png"))
         self.turning_hand_counter_image_label.setScaledContents(True)
         self.turning_hand_counter_image_label.setObjectName("turning_hand_counter_image_label")
         self.turning_hand_counter_vertical_layout.addWidget(self.turning_hand_counter_image_label)
@@ -573,12 +584,14 @@ class Ui_main_window(QMainWindow):
         self.mouse_exit_vertical_layout.setSpacing(0)
         self.mouse_exit_vertical_layout.setObjectName("mouse_exit_vertical_layout")
         self.mouse_exit_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.mouse_exit_image_label.set_absolute_path(self.absolute_path)
         self.mouse_exit_image_label.set_name("mouse_stop")
         self.mouse_exit_image_label.setMinimumSize(QtCore.QSize(120, 200))
         self.mouse_exit_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.mouse_exit_image_label.setText("")
         self.mouse_exit_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.mouse_exit_image_label.setPixmap(QtGui.QPixmap("./gesture_images/mouse_stering_gestures/stop_mouse_mode.png"))
+        self.mouse_exit_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/mouse_stering_gestures/stop_mouse_mode.png"))
         self.mouse_exit_image_label.setScaledContents(True)
         self.mouse_exit_image_label.setObjectName("mouse_exit_image_label")
         self.mouse_exit_vertical_layout.addWidget(self.mouse_exit_image_label)
@@ -608,12 +621,14 @@ class Ui_main_window(QMainWindow):
         self.mouse_steering_vertical_layout.setSpacing(0)
         self.mouse_steering_vertical_layout.setObjectName("mouse_steering_vertical_layout")
         self.mouse_steering_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.mouse_steering_image_label.set_absolute_path(self.absolute_path)
         self.mouse_steering_image_label.set_name("mouse_steering")
         self.mouse_steering_image_label.setMinimumSize(QtCore.QSize(180, 200))
         self.mouse_steering_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.mouse_steering_image_label.setText("")
         self.mouse_steering_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.mouse_steering_image_label.setPixmap(QtGui.QPixmap("./gesture_images/mouse_stering_gestures/mouse_stering.png"))
+        self.mouse_steering_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/mouse_stering_gestures/mouse_stering.png"))
         self.mouse_steering_image_label.setScaledContents(True)
         self.mouse_steering_image_label.setObjectName("mouse_steering_image_label")
         self.mouse_steering_vertical_layout.addWidget(self.mouse_steering_image_label)
@@ -640,12 +655,14 @@ class Ui_main_window(QMainWindow):
         self.thumb_up_vertical_layout.setSpacing(0)
         self.thumb_up_vertical_layout.setObjectName("thumb_up_vertical_layout")
         self.thumb_up_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.thumb_up_image_label.set_absolute_path(self.absolute_path)
         self.thumb_up_image_label.set_name("thumb_up")
         self.thumb_up_image_label.setMinimumSize(QtCore.QSize(180, 0))
         self.thumb_up_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.thumb_up_image_label.setText("")
         self.thumb_up_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.thumb_up_image_label.setPixmap(QtGui.QPixmap("./gesture_images/thumb_up.png"))
+        self.thumb_up_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/thumb_up.png"))
         self.thumb_up_image_label.setScaledContents(True)
         self.thumb_up_image_label.setObjectName("thumb_up_image_label")
         self.thumb_up_vertical_layout.addWidget(self.thumb_up_image_label)
@@ -674,6 +691,7 @@ class Ui_main_window(QMainWindow):
         self.druming_fingers_vertical_layout.setSpacing(0)
         self.druming_fingers_vertical_layout.setObjectName("druming_fingers_vertical_layout")
         self.druming_fingers_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.druming_fingers_image_label.set_absolute_path(self.absolute_path)
         self.druming_fingers_image_label.set_name("drumming_fingers")
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -684,7 +702,8 @@ class Ui_main_window(QMainWindow):
         self.druming_fingers_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.druming_fingers_image_label.setText("")
         self.druming_fingers_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.druming_fingers_image_label.setPixmap(QtGui.QPixmap("./gesture_images/drumming_fingers.png"))
+        self.druming_fingers_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/drumming_fingers.png"))
         self.druming_fingers_image_label.setScaledContents(True)
         self.druming_fingers_image_label.setObjectName("druming_fingers_image_label")
         self.druming_fingers_vertical_layout.addWidget(self.druming_fingers_image_label)
@@ -720,12 +739,14 @@ class Ui_main_window(QMainWindow):
         self.swiping_up_vertical_layout.setSpacing(0)
         self.swiping_up_vertical_layout.setObjectName("swiping_up_vertical_layout")
         self.swiping_up_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.swiping_up_image_label.set_absolute_path(self.absolute_path)
         self.swiping_up_image_label.set_name("swiping_up")
         self.swiping_up_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.swiping_up_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.swiping_up_image_label.setText("")
         self.swiping_up_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.swiping_up_image_label.setPixmap(QtGui.QPixmap("./gesture_images/swiping_up.png"))
+        self.swiping_up_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/swiping_up.png"))
         self.swiping_up_image_label.setScaledContents(True)
         self.swiping_up_image_label.setObjectName("swiping_up_image_label")
         self.swiping_up_vertical_layout.addWidget(self.swiping_up_image_label)
@@ -761,12 +782,14 @@ class Ui_main_window(QMainWindow):
         self.swiping_down_vertical_layout.setSpacing(0)
         self.swiping_down_vertical_layout.setObjectName("swiping_down_vertical_layout")
         self.swiping_down_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.swiping_down_image_label.set_absolute_path(self.absolute_path)
         self.swiping_down_image_label.set_name("swiping_down")
         self.swiping_down_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.swiping_down_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.swiping_down_image_label.setText("")
         self.swiping_down_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.swiping_down_image_label.setPixmap(QtGui.QPixmap("./gesture_images/swiping_down.png"))
+        self.swiping_down_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/swiping_down.png"))
         self.swiping_down_image_label.setScaledContents(True)
         self.swiping_down_image_label.setObjectName("swiping_down_image_label")
         self.swiping_down_vertical_layout.addWidget(self.swiping_down_image_label)
@@ -802,12 +825,14 @@ class Ui_main_window(QMainWindow):
         self.rolling_hand_vertical_layout.setSpacing(0)
         self.rolling_hand_vertical_layout.setObjectName("rolling_hand_vertical_layout")
         self.rolling_hand_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.rolling_hand_image_label.set_absolute_path(self.absolute_path)
         self.rolling_hand_image_label.set_name("rolling_hand_backward")
         self.rolling_hand_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.rolling_hand_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.rolling_hand_image_label.setText("")
         self.rolling_hand_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.rolling_hand_image_label.setPixmap(QtGui.QPixmap("./gesture_images/rolling_hand_backward.png"))
+        self.rolling_hand_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/rolling_hand_backward.png"))
         self.rolling_hand_image_label.setScaledContents(True)
         self.rolling_hand_image_label.setObjectName("rolling_hand_image_label")
         self.rolling_hand_vertical_layout.addWidget(self.rolling_hand_image_label)
@@ -843,12 +868,14 @@ class Ui_main_window(QMainWindow):
         self.swiping_left_vertical_layout.setSpacing(0)
         self.swiping_left_vertical_layout.setObjectName("swiping_left_vertical_layout")
         self.swiping_left_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.swiping_left_image_label.set_absolute_path(self.absolute_path)
         self.swiping_left_image_label.set_name("swiping_left")
         self.swiping_left_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.swiping_left_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.swiping_left_image_label.setText("")
         self.swiping_left_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.swiping_left_image_label.setPixmap(QtGui.QPixmap("./gesture_images/swiping_left.png"))
+        self.swiping_left_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/swiping_left.png"))
         self.swiping_left_image_label.setScaledContents(True)
         self.swiping_left_image_label.setObjectName("swiping_left_image_label")
         self.swiping_left_vertical_layout.addWidget(self.swiping_left_image_label)
@@ -884,12 +911,14 @@ class Ui_main_window(QMainWindow):
         self.rolling_hand_forward_vertical_layout.setSpacing(0)
         self.rolling_hand_forward_vertical_layout.setObjectName("rolling_hand_forward_vertical_layout")
         self.rolling_hand_forward_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.rolling_hand_forward_image_label.set_absolute_path(self.absolute_path)
         self.rolling_hand_forward_image_label.set_name("rolling_hand_forward")
         self.rolling_hand_forward_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.rolling_hand_forward_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.rolling_hand_forward_image_label.setText("")
         self.rolling_hand_forward_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.rolling_hand_forward_image_label.setPixmap(QtGui.QPixmap("./gesture_images/rolling_hand_forward.png"))
+        self.rolling_hand_forward_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/rolling_hand_forward.png"))
         self.rolling_hand_forward_image_label.setScaledContents(True)
         self.rolling_hand_forward_image_label.setObjectName("rolling_hand_forward_image_label")
         self.rolling_hand_forward_vertical_layout.addWidget(self.rolling_hand_forward_image_label)
@@ -925,12 +954,14 @@ class Ui_main_window(QMainWindow):
         self.swiping_right_vertical_layout.setSpacing(0)
         self.swiping_right_vertical_layout.setObjectName("swiping_right_vertical_layout")
         self.swiping_right_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.swiping_right_image_label.set_absolute_path(self.absolute_path)
         self.swiping_right_image_label.set_name("swiping_right")
         self.swiping_right_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.swiping_right_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.swiping_right_image_label.setText("")
         self.swiping_right_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.swiping_right_image_label.setPixmap(QtGui.QPixmap("./gesture_images/swiping_right.png"))
+        self.swiping_right_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/swiping_right.png"))
         self.swiping_right_image_label.setScaledContents(True)
         self.swiping_right_image_label.setObjectName("swiping_right_image_label")
         self.swiping_right_vertical_layout.addWidget(self.swiping_right_image_label)
@@ -966,13 +997,15 @@ class Ui_main_window(QMainWindow):
         self.stop_sign_vertical_layout.setSpacing(0)
         self.stop_sign_vertical_layout.setObjectName("stop_sign_vertical_layout")
         self.stop_sign_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.stop_sign_image_label.set_absolute_path(self.absolute_path)
         self.stop_sign_image_label.set_name("stop_sign")
         self.stop_sign_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.stop_sign_image_label.setAutoFillBackground(False)
         self.stop_sign_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.stop_sign_image_label.setText("")
         self.stop_sign_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.stop_sign_image_label.setPixmap(QtGui.QPixmap("./gesture_images/stop_sign.png"))
+        self.stop_sign_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/stop_sign.png"))
         self.stop_sign_image_label.setScaledContents(True)
         self.stop_sign_image_label.setObjectName("stop_sign_image_label")
         self.stop_sign_vertical_layout.addWidget(self.stop_sign_image_label)
@@ -1008,12 +1041,14 @@ class Ui_main_window(QMainWindow):
         self.thumb_down_vertical_layout.setSpacing(0)
         self.thumb_down_vertical_layout.setObjectName("thumb_down_vertical_layout")
         self.thumb_down_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.thumb_down_image_label.set_absolute_path(self.absolute_path)
         self.thumb_down_image_label.set_name("thumb_down")
         self.thumb_down_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.thumb_down_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.thumb_down_image_label.setText("")
         self.thumb_down_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.thumb_down_image_label.setPixmap(QtGui.QPixmap("./gesture_images/thumb_down.png"))
+        self.thumb_down_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/thumb_down.png"))
         self.thumb_down_image_label.setScaledContents(True)
         self.thumb_down_image_label.setObjectName("thumb_down_image_label")
         self.thumb_down_vertical_layout.addWidget(self.thumb_down_image_label)
@@ -1049,12 +1084,14 @@ class Ui_main_window(QMainWindow):
         self.sliding_two_fingers_down_vertical_layout_2.setSpacing(0)
         self.sliding_two_fingers_down_vertical_layout_2.setObjectName("sliding_two_fingers_down_vertical_layout_2")
         self.shaking_hand_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.shaking_hand_image_label.set_absolute_path(self.absolute_path)
         self.shaking_hand_image_label.set_name("shaking_hand")
         self.shaking_hand_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.shaking_hand_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.shaking_hand_image_label.setText("")
         self.shaking_hand_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.shaking_hand_image_label.setPixmap(QtGui.QPixmap("./gesture_images/shaking_hand.png"))
+        self.shaking_hand_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/shaking_hand.png"))
         self.shaking_hand_image_label.setScaledContents(True)
         self.shaking_hand_image_label.setObjectName("shaking_hand_image_label")
         self.sliding_two_fingers_down_vertical_layout_2.addWidget(self.shaking_hand_image_label)
@@ -1090,12 +1127,14 @@ class Ui_main_window(QMainWindow):
         self.zooming_out_with_fiull_hand_vertical_layout.setSpacing(0)
         self.zooming_out_with_fiull_hand_vertical_layout.setObjectName("zooming_out_with_fiull_hand_vertical_layout")
         self.zooming_out_with_fiull_hand_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.zooming_out_with_fiull_hand_image_label.set_absolute_path(self.absolute_path)
         self.zooming_out_with_fiull_hand_image_label.set_name("zooming_out_with_full_hand")
         self.zooming_out_with_fiull_hand_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.zooming_out_with_fiull_hand_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.zooming_out_with_fiull_hand_image_label.setText("")
         self.zooming_out_with_fiull_hand_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.zooming_out_with_fiull_hand_image_label.setPixmap(QtGui.QPixmap("./gesture_images/zooming_out_with_full_hand.png"))
+        self.zooming_out_with_fiull_hand_image_label.setPixmap(QtGui.QPixmap
+                                        (self.absolute_path + "/gesture_images/zooming_out_with_full_hand.png"))
         self.zooming_out_with_fiull_hand_image_label.setScaledContents(True)
         self.zooming_out_with_fiull_hand_image_label.setObjectName("zooming_out_with_fiull_hand_image_label")
         self.zooming_out_with_fiull_hand_vertical_layout.addWidget(self.zooming_out_with_fiull_hand_image_label)
@@ -1131,12 +1170,14 @@ class Ui_main_window(QMainWindow):
         self.zooming_in_with_full_hand_vertical_layout.setSpacing(0)
         self.zooming_in_with_full_hand_vertical_layout.setObjectName("zooming_in_with_full_hand_vertical_layout")
         self.zooming_in_with_full_hand_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.zooming_in_with_full_hand_image_label.set_absolute_path(self.absolute_path)
         self.zooming_in_with_full_hand_image_label.set_name("zooming_in_with_full_hand")
         self.zooming_in_with_full_hand_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.zooming_in_with_full_hand_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.zooming_in_with_full_hand_image_label.setText("")
         self.zooming_in_with_full_hand_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.zooming_in_with_full_hand_image_label.setPixmap(QtGui.QPixmap("./gesture_images/zooming_in_with_full_hand.png"))
+        self.zooming_in_with_full_hand_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/zooming_in_with_full_hand.png"))
         self.zooming_in_with_full_hand_image_label.setScaledContents(True)
         self.zooming_in_with_full_hand_image_label.setObjectName("zooming_in_with_full_hand_image_label")
         self.zooming_in_with_full_hand_vertical_layout.addWidget(self.zooming_in_with_full_hand_image_label)
@@ -1172,12 +1213,14 @@ class Ui_main_window(QMainWindow):
         self.zooming_in_with_two_fing_vertical_layout.setSpacing(0)
         self.zooming_in_with_two_fing_vertical_layout.setObjectName("zooming_in_with_two_fing_vertical_layout")
         self.zooming_in_with_two_fing_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.zooming_in_with_two_fing_image_label.set_absolute_path(self.absolute_path)
         self.zooming_in_with_two_fing_image_label.set_name("zooming_in_with_two_fingers")
         self.zooming_in_with_two_fing_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.zooming_in_with_two_fing_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.zooming_in_with_two_fing_image_label.setText("")
         self.zooming_in_with_two_fing_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.zooming_in_with_two_fing_image_label.setPixmap(QtGui.QPixmap("./gesture_images/zooming_in_with_two_fingers.png"))
+        self.zooming_in_with_two_fing_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/zooming_in_with_two_fingers.png"))
         self.zooming_in_with_two_fing_image_label.setScaledContents(True)
         self.zooming_in_with_two_fing_image_label.setObjectName("zooming_in_with_two_fing_image_label")
         self.zooming_in_with_two_fing_vertical_layout.addWidget(self.zooming_in_with_two_fing_image_label)
@@ -1213,12 +1256,14 @@ class Ui_main_window(QMainWindow):
         self.zooming_out_with_two_fing_vertical_layout.setSpacing(0)
         self.zooming_out_with_two_fing_vertical_layout.setObjectName("zooming_out_with_two_fing_vertical_layout")
         self.zooming_out_with_two_fing_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.zooming_out_with_two_fing_image_label.set_absolute_path(self.absolute_path)
         self.zooming_out_with_two_fing_image_label.set_name("zooming_out_with_two_fingers")
         self.zooming_out_with_two_fing_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.zooming_out_with_two_fing_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.zooming_out_with_two_fing_image_label.setText("")
         self.zooming_out_with_two_fing_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.zooming_out_with_two_fing_image_label.setPixmap(QtGui.QPixmap("./gesture_images/zooming_out_with_2_fingers.png"))
+        self.zooming_out_with_two_fing_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/zooming_out_with_2_fingers.png"))
         self.zooming_out_with_two_fing_image_label.setScaledContents(True)
         self.zooming_out_with_two_fing_image_label.setObjectName("zooming_out_with_two_fing_image_label")
         self.zooming_out_with_two_fing_vertical_layout.addWidget(self.zooming_out_with_two_fing_image_label)
@@ -1254,12 +1299,14 @@ class Ui_main_window(QMainWindow):
         self.turrning_hand_clock_vertical_layout.setSpacing(0)
         self.turrning_hand_clock_vertical_layout.setObjectName("turrning_hand_clock_vertical_layout")
         self.turrning_hand_clock_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.turrning_hand_clock_image_label.set_absolute_path(self.absolute_path)
         self.turrning_hand_clock_image_label.set_name("turning_hand_clockwise")
         self.turrning_hand_clock_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.turrning_hand_clock_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.turrning_hand_clock_image_label.setText("")
         self.turrning_hand_clock_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.turrning_hand_clock_image_label.setPixmap(QtGui.QPixmap("./gesture_images/turning_hand_clockwise.png"))
+        self.turrning_hand_clock_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/turning_hand_clockwise.png"))
         self.turrning_hand_clock_image_label.setScaledContents(True)
         self.turrning_hand_clock_image_label.setObjectName("turrning_hand_clock_image_label")
         self.turrning_hand_clock_vertical_layout.addWidget(self.turrning_hand_clock_image_label)
@@ -1295,12 +1342,14 @@ class Ui_main_window(QMainWindow):
         self.pulling_hand_in_vertical_layout.setSpacing(0)
         self.pulling_hand_in_vertical_layout.setObjectName("pulling_hand_in_vertical_layout")
         self.pulling_hand_in_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.pulling_hand_in_image_label.set_absolute_path(self.absolute_path)
         self.pulling_hand_in_image_label.set_name("pulling_hand_in")
         self.pulling_hand_in_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.pulling_hand_in_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.pulling_hand_in_image_label.setText("")
         self.pulling_hand_in_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.pulling_hand_in_image_label.setPixmap(QtGui.QPixmap("./gesture_images/pulling_hand_in.png"))
+        self.pulling_hand_in_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/pulling_hand_in.png"))
         self.pulling_hand_in_image_label.setScaledContents(True)
         self.pulling_hand_in_image_label.setObjectName("pulling_hand_in_image_label")
         self.pulling_hand_in_vertical_layout.addWidget(self.pulling_hand_in_image_label)
@@ -1336,12 +1385,14 @@ class Ui_main_window(QMainWindow):
         self.pushing_hand_away_vertical_layout.setSpacing(0)
         self.pushing_hand_away_vertical_layout.setObjectName("pushing_hand_away_vertical_layout")
         self.pushing_hand_away_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.pushing_hand_away_image_label.set_absolute_path(self.absolute_path)
         self.pushing_hand_away_image_label.set_name("pushing_hand_away")
         self.pushing_hand_away_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.pushing_hand_away_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.pushing_hand_away_image_label.setText("")
         self.pushing_hand_away_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.pushing_hand_away_image_label.setPixmap(QtGui.QPixmap("./gesture_images/pushing_hand_away.png"))
+        self.pushing_hand_away_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/pushing_hand_away.png"))
         self.pushing_hand_away_image_label.setScaledContents(True)
         self.pushing_hand_away_image_label.setObjectName("pushing_hand_away_image_label")
         self.pushing_hand_away_vertical_layout.addWidget(self.pushing_hand_away_image_label)
@@ -1377,12 +1428,14 @@ class Ui_main_window(QMainWindow):
         self.pulling_two_fingers_in_vertical_layout.setSpacing(0)
         self.pulling_two_fingers_in_vertical_layout.setObjectName("pulling_two_fingers_in_vertical_layout")
         self.pulling_two_fingers_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.pulling_two_fingers_image_label.set_absolute_path(self.absolute_path)
         self.pulling_two_fingers_image_label.set_name("pulling_two_fingers_in")
         self.pulling_two_fingers_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.pulling_two_fingers_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.pulling_two_fingers_image_label.setText("")
         self.pulling_two_fingers_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.pulling_two_fingers_image_label.setPixmap(QtGui.QPixmap("./gesture_images/pulling_two_fingers_in.png"))
+        self.pulling_two_fingers_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/pulling_two_fingers_in.png"))
         self.pulling_two_fingers_image_label.setScaledContents(True)
         self.pulling_two_fingers_image_label.setObjectName("pulling_two_fingers_image_label")
         self.pulling_two_fingers_in_vertical_layout.addWidget(self.pulling_two_fingers_image_label)
@@ -1418,12 +1471,14 @@ class Ui_main_window(QMainWindow):
         self.pushing_two_fingers_away_vertical_layout.setSpacing(0)
         self.pushing_two_fingers_away_vertical_layout.setObjectName("pushing_two_fingers_away_vertical_layout")
         self.pushing_two_fingers_away_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.pushing_two_fingers_away_image_label.set_absolute_path(self.absolute_path)
         self.pushing_two_fingers_away_image_label.set_name("pushing_two_fingers_away")
         self.pushing_two_fingers_away_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.pushing_two_fingers_away_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.pushing_two_fingers_away_image_label.setText("")
         self.pushing_two_fingers_away_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.pushing_two_fingers_away_image_label.setPixmap(QtGui.QPixmap("./gesture_images/pushing_two_finger_away.png"))
+        self.pushing_two_fingers_away_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/pushing_two_finger_away.png"))
         self.pushing_two_fingers_away_image_label.setScaledContents(True)
         self.pushing_two_fingers_away_image_label.setObjectName("pushing_two_fingers_away_image_label")
         self.pushing_two_fingers_away_vertical_layout.addWidget(self.pushing_two_fingers_away_image_label)
@@ -1459,12 +1514,14 @@ class Ui_main_window(QMainWindow):
         self.sliding_two_fingers_left_vertical_layout.setSpacing(0)
         self.sliding_two_fingers_left_vertical_layout.setObjectName("sliding_two_fingers_left_vertical_layout")
         self.sliding_two_fingers_left_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.sliding_two_fingers_left_image_label.set_absolute_path(self.absolute_path)
         self.sliding_two_fingers_left_image_label.set_name("sliding_two_fingers_left")
         self.sliding_two_fingers_left_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.sliding_two_fingers_left_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.sliding_two_fingers_left_image_label.setText("")
         self.sliding_two_fingers_left_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.sliding_two_fingers_left_image_label.setPixmap(QtGui.QPixmap("./gesture_images/sliding_two_finger_left.png"))
+        self.sliding_two_fingers_left_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/sliding_two_finger_left.png"))
         self.sliding_two_fingers_left_image_label.setScaledContents(True)
         self.sliding_two_fingers_left_image_label.setObjectName("sliding_two_fingers_left_image_label")
         self.sliding_two_fingers_left_vertical_layout.addWidget(self.sliding_two_fingers_left_image_label)
@@ -1500,12 +1557,14 @@ class Ui_main_window(QMainWindow):
         self.sliding_two_fingers_right_vertical_layout.setSpacing(0)
         self.sliding_two_fingers_right_vertical_layout.setObjectName("sliding_two_fingers_right_vertical_layout")
         self.sliding_two_fingers_right_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.sliding_two_fingers_right_image_label.set_absolute_path(self.absolute_path)
         self.sliding_two_fingers_right_image_label.set_name("sliding_two_fingers_right")
         self.sliding_two_fingers_right_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.sliding_two_fingers_right_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.sliding_two_fingers_right_image_label.setText("")
         self.sliding_two_fingers_right_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.sliding_two_fingers_right_image_label.setPixmap(QtGui.QPixmap("./gesture_images/sliding_two_finger_right.png"))
+        self.sliding_two_fingers_right_image_label.setPixmap(QtGui.QPixmap
+                                (self.absolute_path + "/gesture_images/sliding_two_finger_right.png"))
         self.sliding_two_fingers_right_image_label.setScaledContents(True)
         self.sliding_two_fingers_right_image_label.setObjectName("sliding_two_fingers_right_image_label")
         self.sliding_two_fingers_right_vertical_layout.addWidget(self.sliding_two_fingers_right_image_label)
@@ -1541,12 +1600,14 @@ class Ui_main_window(QMainWindow):
         self.sliding_two_fingers_down_vertical_layout.setSpacing(0)
         self.sliding_two_fingers_down_vertical_layout.setObjectName("sliding_two_fingers_down_vertical_layout")
         self.sliding_two_fingers_down_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.sliding_two_fingers_down_image_label.set_absolute_path(self.absolute_path)
         self.sliding_two_fingers_down_image_label.set_name("sliding_two_fingers_down")
         self.sliding_two_fingers_down_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.sliding_two_fingers_down_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.sliding_two_fingers_down_image_label.setText("")
         self.sliding_two_fingers_down_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.sliding_two_fingers_down_image_label.setPixmap(QtGui.QPixmap("./gesture_images/sliding_two_fingers_down.png"))
+        self.sliding_two_fingers_down_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/sliding_two_fingers_down.png"))
         self.sliding_two_fingers_down_image_label.setScaledContents(True)
         self.sliding_two_fingers_down_image_label.setObjectName("sliding_two_fingers_down_image_label")
         self.sliding_two_fingers_down_vertical_layout.addWidget(self.sliding_two_fingers_down_image_label)
@@ -1582,12 +1643,14 @@ class Ui_main_window(QMainWindow):
         self.sliding_two_fingers_up_vertical_layout.setSpacing(0)
         self.sliding_two_fingers_up_vertical_layout.setObjectName("sliding_two_fingers_up_vertical_layout")
         self.sliding_two_fingers_up_image_label = MyLabel(self.scrollAreaWidgetContents)
+        self.sliding_two_fingers_up_image_label.set_absolute_path(self.absolute_path)
         self.sliding_two_fingers_up_image_label.set_name("sliding_two_fingers_up")
         self.sliding_two_fingers_up_image_label.setMinimumSize(QtCore.QSize(0, 200))
         self.sliding_two_fingers_up_image_label.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.sliding_two_fingers_up_image_label.setText("")
         self.sliding_two_fingers_up_image_label.setTextFormat(QtCore.Qt.AutoText)
-        self.sliding_two_fingers_up_image_label.setPixmap(QtGui.QPixmap("./gesture_images/sliding_two_fingers_up.png"))
+        self.sliding_two_fingers_up_image_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/gesture_images/sliding_two_fingers_up.png"))
         self.sliding_two_fingers_up_image_label.setScaledContents(True)
         self.sliding_two_fingers_up_image_label.setObjectName("sliding_two_fingers_up_image_label")
         self.sliding_two_fingers_up_vertical_layout.addWidget(self.sliding_two_fingers_up_image_label)
@@ -1689,10 +1752,7 @@ class Ui_main_window(QMainWindow):
         self.retranslateUi(main_window)
         self.aplication_tab_widget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(main_window)
-
-        '''wziecie wszystkich nazw akcji'''
-        action_names = self.cont.get_camera().get_mapping().function_getter.get_all_functions_names()
-        '''dodanie akcji do comboboxow'''
+        action_names = self.cont.get_gesture_recognition().get_mapping().function_getter.get_all_functions_names()
         for i in action_names:
             self.action1_comboBox.addItem(self.nm.get_user_friendly_action_name(i))
             self.action2_comboBox.addItem(self.nm.get_user_friendly_action_name(i))
@@ -1731,10 +1791,10 @@ class Ui_main_window(QMainWindow):
         self.restore_button.clicked.connect(lambda: self.get_default_config())
         self.cancel_button.clicked.connect(lambda: self.get_config())
         self.show_notification_check_box.stateChanged.connect(
-                lambda: self.cont.get_camera().get_mapping().set_notifications_enabled(
+                lambda: self.cont.get_gesture_recognition().get_mapping().set_notifications_enabled(
                         self.show_notification_check_box.isChecked()))
         self.modify_gestures_button.clicked.connect(lambda: self.aplication_tab_widget.setCurrentIndex(1))
-        self.Worker1 = Worker1(self.cont, self)
+        self.Worker1 = Worker1(self.cont, self, self.absolute_path)
         self.Worker1.start()
         self.Worker1.ImageUpdate.connect(self.ImageUpdateSlot)
 
@@ -1784,7 +1844,6 @@ class Ui_main_window(QMainWindow):
         self.aplication_tab_widget.setTabText(self.aplication_tab_widget.indexOf(self.gesture_tab), _translate("main_window", "Gestures"))
 
     def ImageUpdateSlot(self, Image):
-        pass
         self.FeedLabel.setPixmap(QPixmap.fromImage(Image))
 
     def is_active(self):
@@ -1793,7 +1852,8 @@ class Ui_main_window(QMainWindow):
 
 class Worker1(QThread):
 
-    def __init__(self, controller, win):
+    def __init__(self, controller, win, absolute_path):
+        self.absolute_path = absolute_path
         super().__init__()
         self.controller = controller
         self.win = win
@@ -1801,7 +1861,7 @@ class Worker1(QThread):
     ImageUpdate = pyqtSignal(QImage)
 
     def run(self):
-        img = Image.open('./other/no_camera_picture.png')
+        img = Image.open(self.absolute_path + '/other/no_camera_picture.png')
         no_cam = asarray(img)
         while self.win.get_close_time() is False:
             if self.win.is_active():

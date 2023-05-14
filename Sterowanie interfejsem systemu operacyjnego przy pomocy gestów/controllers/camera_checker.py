@@ -15,5 +15,3 @@ class CameraChecker():
             cap.release()
             index += 1
         return arr
-
-

@@ -1,7 +1,7 @@
 import platform
 import ctypes
 import pyautogui
-from gesture_liblary.mouse_steering import GestureMouseSteering
+from gesture_library.mouse_steering import GestureMouseSteering
 import screen_brightness_control as sbc
 from ctypes import cast, POINTER, wintypes as w
 from comtypes import CLSCTX_ALL
@@ -12,26 +12,27 @@ class SystemController:
 
     _scroll_speed = 200
 
-    def __init__(self):
+    def __init__(self, absolute_path):
+        self.absolute_path = absolute_path
         self.operating_system_name = platform.system()
-        self.camera=None
+        self.camera = None
         self.mouse_steering = None
         self.sound_values = []
         self.read_sound_values_from_file()
 
     def read_sound_values_from_file(self):
-        with open('./other/sound_level_values.txt','r') as f:
+        with open(self.absolute_path + '/other/sound_level_values.txt', 'r') as f:
             self.sound_values = f.readlines()
         for a in range (len(self.sound_values)):
             b = self.sound_values[a]
-            self.sound_values[a] = b[0:-2]
+            self.sound_values[a] = b[0: -2]
         self.sound_values = [float(x)  for x in self.sound_values]
 
-    def set_reference(self,function_getter):
-        self.function_getter=function_getter
+    def set_reference(self, function_getter):
+        self.function_getter = function_getter
 
-    def set_camera_reference(self,camera):
-        self.camera= camera
+    def set_camera_reference(self, camera):
+        self.camera = camera
         self.mouse_steering = GestureMouseSteering(camera)
 
     def minimize_window(self):
@@ -90,7 +91,7 @@ class SystemController:
                 else:
                     self.current_volume = 0.0
                 break
-        if self.current_volume >0.0:
+        if self.current_volume > 0.0:
             self.current_volume = 0.0
         try:
             self.volume.SetMasterVolumeLevel(self.current_volume, None)
@@ -153,7 +154,7 @@ class SystemController:
         pyautogui.keyUp('alt')
 
     def mouse_start(self):
-        self.mouse_steering.start_mouse_steering()
+        self.mouse_steering.start_mouse_steering(self.function_getter)
         self.function_getter.set_time_before()
 
     def stop_mouse(self):
@@ -172,8 +173,8 @@ class SystemController:
     def escape(self):
         pyautogui.press('esc')
 
-    def set_controller_reference(self,cont):
-        self.controller_reference=cont
+    def set_controller_reference(self, cont):
+        self.controller_reference = cont
 
     def do_nothing(self):
         pass
