@@ -1,7 +1,7 @@
 # Portfolio
 
 Repozytorium zawiera projekty, które wykonałem samodzielnie (większość projektów) lub w grupach 2, 3, 4-osobowych.
-Wykorzystałem takie takie języki programowania, jak Python, C++, Java, C#, JavaScript. Znajdują się tu testy przy pomocy
+Wykorzystałem takie języki programowania, jak Python, C++, Java, C#, JavaScript. Znajdują się tu testy przy pomocy
 narzędzi unittest, selenium. W kilku projektach wykorzystałem narzędzia CI/CD, takie jak Jenkins oraz Gitlab Runner.<br />
 Najważniejsze projekty:
 
