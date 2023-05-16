@@ -79,43 +79,43 @@ class SystemController:
         pyautogui.scroll(-self.scroll_speed)
 
     def volume_up(self):
-        self.devices = AudioUtilities.GetSpeakers()
-        self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
-                                               CLSCTX_ALL, None)
-        self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
-        self.current_volume = self.volume.GetMasterVolumeLevel()
-        for a in range (len(self.sound_values)):
-            if self.current_volume <= self.sound_values[a]:
-                if a < 50:
-                    self.current_volume = self.sound_values[a+1]
-                else:
-                    self.current_volume = 0.0
-                break
-        if self.current_volume > 0.0:
-            self.current_volume = 0.0
         try:
+            self.devices = AudioUtilities.GetSpeakers()
+            self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
+                                                CLSCTX_ALL, None)
+            self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
+            self.current_volume = self.volume.GetMasterVolumeLevel()
+            for a in range (len(self.sound_values)):
+                if self.current_volume <= self.sound_values[a]:
+                    if a < 50:
+                        self.current_volume = self.sound_values[a+1]
+                    else:
+                        self.current_volume = 0.0
+                    break
+            if self.current_volume > 0.0:
+                self.current_volume = 0.0
             self.volume.SetMasterVolumeLevel(self.current_volume, None)
-        except OSError:
+        except Exception:
             pass
 
     def volume_down(self):
-        self.devices = AudioUtilities.GetSpeakers()
-        self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
-                                               CLSCTX_ALL, None)
-        self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
-        self.current_volume = self.volume.GetMasterVolumeLevel()
-        for a in range (len(self.sound_values)):
-            if self.current_volume <= self.sound_values[a]:
-                if a > 0:
-                    self.current_volume = self.sound_values[a - 1]
-                else:
-                    self.current_volume = -65.25
-                break
-        if self.current_volume < -65.25:
-            self.current_volume = -65.25
         try:
+            self.devices = AudioUtilities.GetSpeakers()
+            self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
+                                                CLSCTX_ALL, None)
+            self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
+            self.current_volume = self.volume.GetMasterVolumeLevel()
+            for a in range (len(self.sound_values)):
+                if self.current_volume <= self.sound_values[a]:
+                    if a > 0:
+                        self.current_volume = self.sound_values[a - 1]
+                    else:
+                        self.current_volume = -65.25
+                    break
+            if self.current_volume < -65.25:
+                self.current_volume = -65.25
             self.volume.SetMasterVolumeLevel(self.current_volume, None)
-        except OSError:
+        except Exception:
             pass
 
     def zoom_in(self):
@@ -203,5 +203,9 @@ class SystemController:
     def space(self):
         pyautogui.press('space')
 
-    def pause(self):
-        pyautogui.press('pause')
+    def screen_keyboard(self):
+        pyautogui.keyDown('win')
+        pyautogui.keyDown('ctrl')
+        pyautogui.press('o')
+        pyautogui.keyUp('ctrl')
+        pyautogui.keyUp('win')

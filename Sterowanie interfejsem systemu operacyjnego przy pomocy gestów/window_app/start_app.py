@@ -58,7 +58,7 @@ class StartApp(QWidget):
             font1.setBold(True)
             self.handy_label.setFont(font1)
             self.handy_label.setAlignment(Qt.AlignCenter | Qt.AlignBottom)
-            self.handy_label.setStyleSheet("color: #7dce82;border:none;")
+            self.handy_label.setStyleSheet("color: #70d345;border:none;")
             self.layout.addWidget(self.handy_label)
             self.label = QLabel("Loading...")
             font2 = self.font()

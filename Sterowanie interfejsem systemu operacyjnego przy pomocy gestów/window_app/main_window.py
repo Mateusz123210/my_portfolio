@@ -128,39 +128,6 @@ class Ui_main_window(QMainWindow):
         if temp >= 0:
             self.camera_combo_box.setCurrentText("Camera "+ str(temp))
 
-    def open_documentation(self):
-        self.documentation_window = QMainWindow()
-        self.documentation_window.setWindowTitle("Handy-instruction")
-        label = QtWidgets.QLabel(self.documentation_window)
-        pixmap = QPixmap(self.absolute_path + '/documentation.png')
-        label.setPixmap(pixmap)
-        label.setScaledContents(True)
-        self.documentation_window.setCentralWidget(label)
-        self.documentation_window.move(0, 0)
-        self.documentation_window.showMaximized()
-
-    def show_authors(self):
-        self.authors_window = QMainWindow()
-        self.authors_window.setWindowTitle("Handy-authors")
-        self.authors_window.setFixedSize(670, 300)
-        self.authors_window.setStyleSheet("background-color: rgb(255, 255, 255);")
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(150)
-        self.authors_label = QtWidgets.QLabel(self.authors_window)
-        self.authors_label.setFont(font)
-        self.authors_label.setText("The application was created as part of the classes: Team project\n\n"
-                                   "Students:\n"
-                                   "Mateusz Urbańczyk\nMaurycy Niewczas\nTomasz Górniak\nYan Machulski\n\n"
-                                   "Mentors: \n"
-                                   "Mateusz Masłoń, Comarch S.A.\n"
-                                   "Tomasz Kubik, BEng, PhD, Wroclaw University of Science and Technology"
-                                   )
-        self.authors_label.resize(660, 280)
-        self.authors_label.move(3, 0)
-        self.authors_window.show()
-
     def get_config(self):
         config = self.cont.get_gesture_recognition().get_mapping().get_gestures_list()
         self.action1_comboBox.setCurrentText(self.nm.get_user_friendly_action_name(config.get(1)))
@@ -1745,6 +1712,37 @@ class Ui_main_window(QMainWindow):
         self.verticalLayout_4.addLayout(self.aply_and_restore_box_layout)
         self.aplication_tab_widget.addTab(self.gesture_tab, "")
         self.verticalLayout.addWidget(self.aplication_tab_widget)
+        self.instruction_tab = QtWidgets.QWidget()
+        self.instruction_tab.setObjectName("instruction_tab")
+        self.gridLayout30 = QtWidgets.QGridLayout(self.instruction_tab)
+        self.gridLayout30.setObjectName("gridLayout30")
+        self.instruction_label = QLabel()
+        self.instruction_label.setPixmap(QtGui.QPixmap
+                        (self.absolute_path + "/documentation.png"))
+        self.gridLayout30.addWidget(self.instruction_label)
+        self.instruction_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.aplication_tab_widget.addTab(self.instruction_tab, "Instruction")
+        self.authors_tab = QtWidgets.QWidget()
+        self.authors_tab.setObjectName("authors_tab")
+        self.gridLayout31 = QtWidgets.QGridLayout(self.authors_tab)
+        self.gridLayout31.setObjectName("gridLayout31")
+        self.authors_label = QLabel()
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(150)
+        self.authors_label.setFont(font)
+        self.authors_label.setText("The application was created as part of the classes: Team project\n\n"
+                                   "Students:\n"
+                                   "Mateusz Urbańczyk\nMaurycy Niewczas\nTomasz Górniak\nYan Machulski\n\n"
+                                   "Mentors: \n"
+                                   "Mateusz Masłoń, Comarch S.A.\n"
+                                   "Tomasz Kubik, BEng, PhD, Wroclaw University of Science and Technology"
+                                   )
+        self.authors_label.setMaximumSize(670, 280)
+        self.authors_label.setStyleSheet("border: 1px solid black;background-color: #FFFFFF;")
+        self.gridLayout31.addWidget(self.authors_label)
+        self.aplication_tab_widget.addTab(self.authors_tab, "Authors")
         spacerItem15 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.verticalLayout.addItem(spacerItem15)
         main_window.setCentralWidget(self.centralwidget)
@@ -1783,8 +1781,8 @@ class Ui_main_window(QMainWindow):
         for i in arr:
             self.camera_combo_box.addItem("Camera "+str(i))
         self.refresh_cameras_button.clicked.connect(lambda: self.refresh_camera_list())
-        self.authors_button.clicked.connect(lambda: self.show_authors())
-        self.help_button.clicked.connect(lambda: self.open_documentation())
+        self.authors_button.clicked.connect(lambda: self.aplication_tab_widget.setCurrentIndex(3))
+        self.help_button.clicked.connect(lambda: self.aplication_tab_widget.setCurrentIndex(2))
         self.camera_combo_box.activated.connect(lambda: self.set_camera())
         self.start_button.clicked.connect(lambda: self.cont.start_stop_gesture_recognition())
         self.apply_button.clicked.connect(lambda: self.set_config())

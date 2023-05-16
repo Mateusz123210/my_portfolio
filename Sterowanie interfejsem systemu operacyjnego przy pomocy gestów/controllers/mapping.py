@@ -1,11 +1,12 @@
 from controllers.gesture_name_mapper import NameMapper
 import json
-from win10toast import ToastNotifier as tn
 import threading
 from threading import Lock
 import time
 from window_app.action_name_mapper import ActionNameMapper
 from controllers.gesture_timer import GestureTimer as gt
+from windows_toasts import WindowsToaster, ToastDuration, ToastAudio, AudioSource, \
+    ToastDisplayImage, ToastImageAndText4, ToastScenario
 
 
 class Mapping():
@@ -26,7 +27,6 @@ class Mapping():
             if not a in temp:
                 self.read_default_configuration_from_file()
                 break
-        self.toaster = tn()
         self.message = 1
         self.new_message = False
         self.new_mouse_message = False
@@ -83,24 +83,31 @@ class Mapping():
         self.notifications_enabled = value
 
     def show_message(self):
-        temp_logo = self.absolute_path + '/logo1.ico'
+        self.toaster = WindowsToaster('Handy')
+        self.newToast = ToastImageAndText4()
+        self.newToast.SetGroup("Handy")
+        self.newToast.SetHeadline("Gesture detected")
+        self.newToast.AddImage(ToastDisplayImage.fromPath(self.absolute_path + '/logo1.ico', large=False,
+                                                circleCrop = False))
+        self.newToast.SetAudio(ToastAudio(AudioSource.Default, looping=False, silent=True))
+        self.newToast.SetDuration(ToastDuration.Short)
+        self.newToast.SetScenario(ToastScenario.Alarm)
         while self.end is False:
             if self.notifications_enabled is True:
                 self.message_mutex.acquire()                
                 if self.new_mouse_message is True:
                     self.new_mouse_message = False
-                    self.toaster.show_toast("Gesture detected",
-                                            "Action name: mouse stop\n",
-                                            duration=1.7, icon_path=temp_logo, threaded=True)
+                    self.newToast.SetFirstLine('Action name: mouse stop')
+                    self.newToast.SetSecondLine("")
+                    self.toaster.show_toast(self.newToast)
                 elif self.new_message is True:
-                    self.toaster.show_toast("Gesture detected",
-                                            "Gesture name: " + self.name_mapper.get_gesture_name(self.message) + "\n"
-                                            + "Action name: " + self.nm.get_user_friendly_action_name(
-                                                str(self.gesture.get(self.message))),
-                               duration=1.7, icon_path=temp_logo, threaded=True)
+                    self.newToast.SetFirstLine("Gesture name: " + self.name_mapper.get_gesture_name(self.message))
+                    self.newToast.SetSecondLine("Action name: " + self.nm.get_user_friendly_action_name(
+                                                str(self.gesture.get(self.message))))
+                    self.toaster.show_toast(self.newToast)
                     self.new_message = False
                 self.message_mutex.release()
-            time.sleep(0.02)
+            time.sleep(0.03)
 
     def get_gesture(self, number: int):
         self.mutex.acquire()

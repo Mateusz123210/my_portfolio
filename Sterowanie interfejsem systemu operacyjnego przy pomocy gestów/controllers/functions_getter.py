@@ -1,6 +1,5 @@
 import sys
 sys.path.insert(0, "..")
-from controllers import user_scripts
 import time
 
 
@@ -9,10 +8,8 @@ class FunctionsGetter():
     def __init__(self, controller, absolute_path):
         self.absolute_path = absolute_path
         self.time_before = time.time()
-        self.u_scripts = user_scripts
         self.controller = controller
         self.controller.set_reference(self)
-        self.u_dict = self.u_scripts.get_functions(self.absolute_path)
         self.dct = {"minimize_window": self.controller.minimize_window,
             "maximize_window": self.controller.maximize_window,
             "close_window": self.controller.close_window,
@@ -38,9 +35,8 @@ class FunctionsGetter():
             "page_up": self.controller.page_up,
             "page_down": self.controller.page_down,
             "space": self.controller.space,
-            "pause": self.controller.pause
+            "screen_keyboard": self.controller.screen_keyboard
         }
-        self.dct = {**self.dct, **self.u_dict}
 
     def get_absolute_path(self):
         return self.absolute_path
