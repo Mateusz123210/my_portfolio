@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="500.0" prefWidth="900.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.fileencryptionapplication.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane fx:id="ap" prefHeight="695.0" prefWidth="860.0">
+         <children>
+            <TextField fx:id="inputFileTextField" editable="false" layoutX="11.0" layoutY="51.0" prefHeight="26.0" prefWidth="722.0" />
+            <TextField fx:id="outputFileTextField" editable="false" layoutX="11.0" layoutY="125.0" prefHeight="26.0" prefWidth="722.0" />
+            <TextField fx:id="privateKeyTextField" editable="false" layoutX="11.0" layoutY="260.0" prefHeight="26.0" prefWidth="722.0" />
+            <TextField fx:id="publicKeyTextField" editable="false" layoutX="11.0" layoutY="321.0" prefHeight="26.0" prefWidth="722.0" />
+            <Button fx:id="inputFileButton" layoutX="751.0" layoutY="51.0" mnemonicParsing="false" onAction="#chooseInputFile" prefHeight="26.0" prefWidth="94.0" text="Choose" />
+            <Button fx:id="outputFileButton" layoutX="751.0" layoutY="125.0" mnemonicParsing="false" onAction="#chooseOutputFile" prefHeight="26.0" prefWidth="94.0" text="Choose" />
+            <Button fx:id="privateKeyButton" layoutX="751.0" layoutY="260.0" mnemonicParsing="false" onAction="#choosePrivateKeyFile" prefHeight="26.0" prefWidth="94.0" text="Choose" />
+            <Button fx:id="publicKeyButton" layoutX="751.0" layoutY="321.0" mnemonicParsing="false" onAction="#choosePublicKeyFile" prefHeight="26.0" prefWidth="94.0" text="Choose" />
+            <Label layoutX="14.0" layoutY="25.0" prefHeight="18.0" prefWidth="194.0" text="Input file" />
+            <Label layoutX="14.0" layoutY="100.0" prefHeight="18.0" prefWidth="227.0" text="Encryption output file" />
+            <Label layoutX="11.0" layoutY="230.0" prefHeight="18.0" prefWidth="111.0" text="Private key" />
+            <Label layoutX="14.0" layoutY="295.0" prefHeight="18.0" prefWidth="123.0" text="Public key" />
+            <Button layoutX="86.0" layoutY="364.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="26.0" prefWidth="272.0" text="Encrypt" />
+            <Button layoutX="391.0" layoutY="364.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="26.0" prefWidth="272.0" text="Decrypt" />
+            <Label fx:id="messageLabel" layoutX="14.0" layoutY="428.0" prefHeight="18.0" prefWidth="830.0" />
+            <Label layoutX="14.0" layoutY="170.0" prefHeight="18.0" prefWidth="185.0" text="Decryption output file" />
+            <TextField fx:id="decryptionTextField" editable="false" layoutX="14.0" layoutY="195.0" prefHeight="26.0" prefWidth="722.0" />
+            <Button fx:id="decryptionButton" layoutX="751.0" layoutY="196.0" mnemonicParsing="false" onAction="#chooseDecryptionOutputFile" prefHeight="26.0" prefWidth="94.0" text="Choose" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>
