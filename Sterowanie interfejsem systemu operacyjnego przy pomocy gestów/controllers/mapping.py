@@ -1,10 +1,7 @@
-from controllers.gesture_name_mapper import NameMapper
 import json
 import threading
 from threading import Lock
 import time
-from window_app.action_name_mapper import ActionNameMapper
-from controllers.gesture_timer import GestureTimer as gt
 from windows_toasts import WindowsToaster, ToastDuration, ToastAudio, AudioSource, \
     ToastDisplayImage, ToastImageAndText4, ToastScenario
 
@@ -13,30 +10,33 @@ class Mapping():
 
     def __init__(self, func_getter, sys_controller):
         self.absolute_path = func_getter.get_absolute_path()
-        self.nm = ActionNameMapper()
+        self.default_gestures_config = {1: "switch window", 2: "escape", 3: "preview of opened windows", 4: "minimize all windows", 5: "space", 6: "page down", 7: "page up", 8: "open action center", 9: "brightness down", 10: "volume down", 11: "volume up", 12: "brightness up",
+                                        13: "close window", 14: "scroll down", 15: "scroll left", 16: "scroll right", 17: "scroll up", 18: "screen keyboard", 19: "mouse start", 20: "window right", 21: "window left", 22: "maximize window", 23: "zoom in", 24: "minimize window", 25: "zoom out"}
         self.gesture = {}
         self.end = False
-        self.name_mapper = NameMapper()
+        self.mutex = Lock()
         self.read_configuration_from_file()
         self.controller = sys_controller
         self.function_getter = func_getter
         self.function_getter.set_mapping_reference(self)
-        self.mutex = Lock()
-        temp =  self.function_getter.get_all_functions_names()
-        for a in self.gesture.values():
-            if not a in temp:
-                self.read_default_configuration_from_file()
-                break
-        self.message = 1
+        temp = self.function_getter.get_all_functions_names()
+
+        if len(self.gesture) != 25:
+            self.gesture = self.default_gestures_config
+        else:
+            for a in self.gesture.values():
+                if not a in temp:
+                    self.set_default_config()
+                    break
+        self.message_first_line = ""
+        self.message_second_line = ""
         self.new_message = False
-        self.new_mouse_message = False
         self.message_mutex = Lock()
         self.time_before = time.time()
         self.time_now = self.time_before
-        self.gesture_timer = gt(self.absolute_path)
-        self.last_gesture_number = -1
+        self.last_gesture = None
         self.notifications_enabled = False
-        t = threading.Thread(name='daemon',target=self.show_message)
+        t = threading.Thread(name='daemon', target=self.show_message)
         t.start()
 
     def end_thread(self):
@@ -49,20 +49,25 @@ class Mapping():
         return dict
 
     def save_configuration_to_file(self):
-        with open(self.absolute_path + '/configuration/user_configuration.json', 'w') as outfile:
-            json.dump(self.gesture, outfile)
+        try:
+            with open(self.absolute_path + '/configuration/user_configuration.json', 'w') as outfile:
+                json.dump(self.gesture, outfile)
+        except Exception:
+            pass
 
     def read_configuration_from_file(self):
-        with open(self.absolute_path + '/configuration/user_configuration.json') as json_file:
-            data = json.load(json_file)
-            self.gesture = {int(k): v for (k, v) in data.items()}
-
-    def read_default_configuration_from_file(self):
         self.mutex.acquire()
-        with open(self.absolute_path + '/configuration/default_configuration.json') as json_file:
-            data = json.load(json_file)
-            self.gesture.clear()
-            self.gesture = {int(k): v for (k, v) in data.items()}
+        try:
+            with open(self.absolute_path + '/configuration/user_configuration.json') as json_file:
+                data = json.load(json_file)
+                self.gesture = {int(k): v for (k, v) in data.items()}
+        except Exception:
+            self.gesture = self.default_gesture_config
+        self.mutex.release()
+
+    def set_default_config(self):
+        self.mutex.acquire()
+        self.gesture = self.default_gestures_config
         self.mutex.release()
         try:
             self.save_configuration_to_file()
@@ -71,10 +76,12 @@ class Mapping():
 
     def set_mouse_end_message(self):
         self.message_mutex.acquire()
-        self.new_mouse_message = True
+        self.message_first_line = "Action name: mouse stop"
+        self.message_second_line = ""
+        self.new_message = True
         self.message_mutex.release()
 
-    def set_notifications_enabled(self,value: bool):
+    def set_notifications_enabled(self, value: bool):
         if value is True:
             self.message_mutex.acquire()
             self.new_mouse_message = False
@@ -88,22 +95,17 @@ class Mapping():
         self.newToast.SetGroup("Handy")
         self.newToast.SetHeadline("Gesture detected")
         self.newToast.AddImage(ToastDisplayImage.fromPath(self.absolute_path + '/logo1.ico', large=False,
-                                                circleCrop = False))
-        self.newToast.SetAudio(ToastAudio(AudioSource.Default, looping=False, silent=True))
+                                                          circleCrop=False))
+        self.newToast.SetAudio(ToastAudio(
+            AudioSource.Default, looping=False, silent=True))
         self.newToast.SetDuration(ToastDuration.Short)
         self.newToast.SetScenario(ToastScenario.Alarm)
         while self.end is False:
             if self.notifications_enabled is True:
-                self.message_mutex.acquire()                
-                if self.new_mouse_message is True:
-                    self.new_mouse_message = False
-                    self.newToast.SetFirstLine('Action name: mouse stop')
-                    self.newToast.SetSecondLine("")
-                    self.toaster.show_toast(self.newToast)
-                elif self.new_message is True:
-                    self.newToast.SetFirstLine("Gesture name: " + self.name_mapper.get_gesture_name(self.message))
-                    self.newToast.SetSecondLine("Action name: " + self.nm.get_user_friendly_action_name(
-                                                str(self.gesture.get(self.message))))
+                self.message_mutex.acquire()
+                if self.new_message is True:
+                    self.newToast.SetFirstLine(self.message_first_line)
+                    self.newToast.SetSecondLine(self.message_second_line)
                     self.toaster.show_toast(self.newToast)
                     self.new_message = False
                 self.message_mutex.release()
@@ -118,7 +120,7 @@ class Mapping():
         self.mutex.release()
         return False
 
-    def set_gesture(self,gesture_action: dict):
+    def set_gesture(self, gesture_action: dict):
         self.mutex.acquire()
         self.gesture = {**gesture_action}
         try:
@@ -130,20 +132,20 @@ class Mapping():
     def set_time_before(self):
         self.time_before = time.time()
 
-    def gesture_action(self, number):
+    def gesture_action(self, recognized_gesture):
         self.time_now = time.time()
-        if self.last_gesture_number == -1 or self.time_now - self.time_before > \
-                self.gesture_timer.get_time(self.last_gesture_number):
-            self.last_gesture_number = number
+        if self.last_gesture == None or self.time_now - self.time_before > \
+                self.last_gesture.get_gesture_time():
+            self.last_gesture = recognized_gesture
             self.time_before = time.time()
+            gesture_number = recognized_gesture.get_gesture_number()
             self.message_mutex.acquire()
             self.new_message = True
-            self.message = number
-            function = self.gesture.get(number)
+            self.message_first_line = "Gesture name: " + \
+                recognized_gesture.get_gesture_name()
+            self.message_second_line = "Action name: " + \
+                str(self.gesture.get(gesture_number))
             self.message_mutex.release()
-            if self.get_gesture(number)  == True:
-                return self.function_getter.call_function(function)
-            else:
-                return False
-        else:
-            return False
+            function = self.gesture.get(gesture_number)
+            if self.get_gesture(gesture_number) == True:
+                self.function_getter.call_function(function)

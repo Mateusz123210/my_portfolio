@@ -1,42 +1,47 @@
-import sys
-sys.path.insert(0, "..")
-import time
 
 
 class FunctionsGetter():
 
     def __init__(self, controller, absolute_path):
         self.absolute_path = absolute_path
-        self.time_before = time.time()
         self.controller = controller
         self.controller.set_reference(self)
-        self.dct = {"minimize_window": self.controller.minimize_window,
-            "maximize_window": self.controller.maximize_window,
-            "close_window": self.controller.close_window,
-            "scroll_up": self.controller.scroll_up,
-            "scroll_down": self.controller.scroll_down,
-            "volume_up": self.controller.volume_up,
-            "volume_down": self.controller.volume_down,
-            "zoom_in": self.controller.zoom_in,
-            "zoom_out": self.controller.zoom_out,
-            "brightness_up": self.controller.brightness_up,
-            "brightness_down": self.controller.brightness_down,
-            "scroll_right": self.controller.scroll_right,
-            "scroll_left": self.controller.scroll_left,
-            "switch_window": self.controller.switch_window,
-            "mouse_start": self.controller.mouse_start,
-            "window_left": self.controller.window_left,
-            "window_right": self.controller.window_right,
-            "escape": self.controller.escape,
-            "do_nothing": self.controller.do_nothing,
-            "minimize_all_windows": self.controller.minimize_all_windows,
-            "preview_of_opened_windows": self.controller.preview_of_opened_windows,
-            "open_action_center": self.controller.open_action_center,
-            "page_up": self.controller.page_up,
-            "page_down": self.controller.page_down,
-            "space": self.controller.space,
-            "screen_keyboard": self.controller.screen_keyboard
-        }
+        self.dct = {"zoom in": self.controller.zoom_in,
+                    "zoom out": self.controller.zoom_out,
+                    "scroll up": self.controller.scroll_up,
+                    "scroll down": self.controller.scroll_down,
+                    "page up": self.controller.page_up,
+                    "page down": self.controller.page_down,
+                    "scroll left": self.controller.scroll_left,
+                    "scroll right": self.controller.scroll_right,
+                    "volume up": self.controller.volume_up,
+                    "volume down": self.controller.volume_down,
+                    "mouse start": self.controller.mouse_start,
+                    "screen keyboard": self.controller.screen_keyboard,
+                    "brightness up": self.controller.brightness_up,
+                    "brightness down": self.controller.brightness_down,
+                    "maximize window": self.controller.maximize_window,
+                    "minimize window": self.controller.minimize_window,
+                    "minimize all windows": self.controller.minimize_all_windows,
+                    "close window": self.controller.close_window,
+                    "switch window": self.controller.switch_window,
+                    "preview of opened windows": self.controller.preview_of_opened_windows,
+                    "window left": self.controller.window_left,
+                    "window right": self.controller.window_right,
+                    "open action center": self.controller.open_action_center,
+                    "escape": self.controller.escape,
+                    "space": self.controller.space,
+                    "do nothing": self.controller.do_nothing
+                    }
+
+    def call_function(self, name):
+        try:
+            self.dct.get(name)()
+        except:
+            pass
+
+    def get_all_functions_names(self):
+        return self.dct.keys()
 
     def get_absolute_path(self):
         return self.absolute_path
@@ -46,20 +51,6 @@ class FunctionsGetter():
 
     def set_time_before(self):
         self.map_ref.set_time_before()
-    
+
     def set_end_mouse_message(self):
         self.map_ref.set_mouse_end_message()
-
-    def call_function(self, name):
-        for key in self.dct.keys():
-            if name == key:
-                func = self.dct.get(key)
-                try:
-                 func()
-                except:
-                    return False
-                return True
-        return False
-
-    def get_all_functions_names(self):
-        return self.dct.keys()

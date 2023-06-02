@@ -21,11 +21,12 @@ class Handy:
 
     def end_application(self):
         self.ui.close_application()
-    
+
     def start_application(self):
-        from window_app.main_window import Ui_main_window as win 
+        from window_app.main_window import Ui_main_window as win
         self.app = QtWidgets.QApplication(sys.argv)
-        QtWidgets.QApplication.setWindowIcon(QIcon(self.absolute_path + '/logo.png'))
+        QtWidgets.QApplication.setWindowIcon(
+            QIcon(self.absolute_path + '/logo.png'))
         self.app.setQuitOnLastWindowClosed(False)
         self.app.lastWindowClosed.connect(self.end_application)
         self.MainWindow = QtWidgets.QMainWindow()
@@ -38,7 +39,7 @@ class Handy:
             self.ui.close_application()
             return
         self.started = True
-        self.e.set()    
+        self.e.set()
         try:
             self.p.terminate()
         except Exception:
@@ -53,7 +54,7 @@ class Handy:
         self.p.daemon = True
         self.p.start()
         self.start_application()
-    
+
     def assign(self, v):
         v.value = 1
 
@@ -63,7 +64,7 @@ class Handy:
         self.start_app.lastWindowClosed.connect(lambda: self.assign(v))
         QApplication.setWindowIcon(QIcon(self.absolute_path + '/logo.png'))
         self.start_app_widget = StartApp(e)
-        sys.exit(self.start_app.exec_())      
+        sys.exit(self.start_app.exec_())
 
 
 if __name__ == '__main__':

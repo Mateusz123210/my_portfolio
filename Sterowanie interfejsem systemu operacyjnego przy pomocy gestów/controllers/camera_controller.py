@@ -1,5 +1,4 @@
 import cv2
-from controllers.camera_checker import CameraChecker
 from threading import Lock
 
 
@@ -7,8 +6,7 @@ class CameraController():
 
     def __init__(self, win):
         self.win = win
-        self.camera_checker = CameraChecker()
-        self.camera_list = self.camera_checker.list_ports()
+        self.camera_list = self.list_ports()
         if len(self.camera_list) > 0:
             self.used_camera_number = self.camera_list[0]
             self.cap = cv2.VideoCapture(self.used_camera_number, cv2.CAP_DSHOW)
@@ -41,8 +39,8 @@ class CameraController():
 
     def set_used_camera_number(self, number: int):
         self.mutex.acquire()
-        self.camera_list = self.camera_checker.list_ports()
-        contains=False
+        self.camera_list = self.list_ports()
+        contains = False
         for a in self.camera_list:
             if number == a:
                 contains = True
@@ -52,13 +50,13 @@ class CameraController():
             self.used_camera_number = number
             self.cap.release()
             self.cap = cv2.VideoCapture(self.used_camera_number, cv2.CAP_DSHOW)
-        temp=self.used_camera_number
+        temp = self.used_camera_number
         self.mutex.release()
         return temp
 
     def refresh_camera_list(self):
         self.mutex.acquire()
-        self.camera_list = self.camera_checker.list_ports()
+        self.camera_list = self.list_ports()
         if len(self.camera_list) > 0:
             if self.used_camera_number != -1:
                 self.cap.release()
@@ -70,3 +68,16 @@ class CameraController():
         temp = self.camera_list
         self.mutex.release()
         return temp
+
+    def list_ports(self):
+        index = 0
+        arr = []
+        while True:
+            cap = cv2.VideoCapture(index, cv2.CAP_DSHOW)
+            if not cap.read()[0]:
+                break
+            else:
+                arr.append(index)
+            cap.release()
+            index += 1
+        return arr

@@ -3,14 +3,13 @@ import ctypes
 import pyautogui
 from gesture_library.mouse_steering import GestureMouseSteering
 import screen_brightness_control as sbc
-from ctypes import cast, POINTER, wintypes as w
-from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from ctypes import wintypes as w
+import time
 
 
 class SystemController:
 
-    _scroll_speed = 200
+    _scroll_speed = 320
 
     def __init__(self, absolute_path):
         self.absolute_path = absolute_path
@@ -18,15 +17,6 @@ class SystemController:
         self.camera = None
         self.mouse_steering = None
         self.sound_values = []
-        self.read_sound_values_from_file()
-
-    def read_sound_values_from_file(self):
-        with open(self.absolute_path + '/other/sound_level_values.txt', 'r') as f:
-            self.sound_values = f.readlines()
-        for a in range (len(self.sound_values)):
-            b = self.sound_values[a]
-            self.sound_values[a] = b[0: -2]
-        self.sound_values = [float(x)  for x in self.sound_values]
 
     def set_reference(self, function_getter):
         self.function_getter = function_getter
@@ -79,44 +69,10 @@ class SystemController:
         pyautogui.scroll(-self.scroll_speed)
 
     def volume_up(self):
-        try:
-            self.devices = AudioUtilities.GetSpeakers()
-            self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
-                                                CLSCTX_ALL, None)
-            self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
-            self.current_volume = self.volume.GetMasterVolumeLevel()
-            for a in range (len(self.sound_values)):
-                if self.current_volume <= self.sound_values[a]:
-                    if a < 50:
-                        self.current_volume = self.sound_values[a+1]
-                    else:
-                        self.current_volume = 0.0
-                    break
-            if self.current_volume > 0.0:
-                self.current_volume = 0.0
-            self.volume.SetMasterVolumeLevel(self.current_volume, None)
-        except Exception:
-            pass
+        pyautogui.press('volumeup')
 
     def volume_down(self):
-        try:
-            self.devices = AudioUtilities.GetSpeakers()
-            self.interface = self.devices.Activate(IAudioEndpointVolume._iid_,
-                                                CLSCTX_ALL, None)
-            self.volume = cast(self.interface, POINTER(IAudioEndpointVolume))
-            self.current_volume = self.volume.GetMasterVolumeLevel()
-            for a in range (len(self.sound_values)):
-                if self.current_volume <= self.sound_values[a]:
-                    if a > 0:
-                        self.current_volume = self.sound_values[a - 1]
-                    else:
-                        self.current_volume = -65.25
-                    break
-            if self.current_volume < -65.25:
-                self.current_volume = -65.25
-            self.volume.SetMasterVolumeLevel(self.current_volume, None)
-        except Exception:
-            pass
+        pyautogui.press('volumedown')
 
     def zoom_in(self):
         pyautogui.keyDown('ctrl')
@@ -130,14 +86,14 @@ class SystemController:
 
     def brightness_up(self):
         current_brightness = sbc.get_brightness()
-        brightness = current_brightness[0] +5
+        brightness = current_brightness[0] + 5
         if brightness > 100:
             brightness = 100
         sbc.set_brightness(brightness)
 
     def brightness_down(self):
         current_brightness = sbc.get_brightness()
-        brightness = current_brightness[0] -5
+        brightness = current_brightness[0] - 5
         if brightness < 0:
             brightness = 0
         sbc.set_brightness(brightness)
@@ -149,6 +105,7 @@ class SystemController:
         pyautogui.press('left')
 
     def switch_window(self):
+        time.sleep(0.1)
         pyautogui.keyDown('alt')
         pyautogui.press('tab')
         pyautogui.keyUp('alt')
@@ -172,9 +129,6 @@ class SystemController:
 
     def escape(self):
         pyautogui.press('esc')
-
-    def set_controller_reference(self, cont):
-        self.controller_reference = cont
 
     def do_nothing(self):
         pass
@@ -209,3 +163,6 @@ class SystemController:
         pyautogui.press('o')
         pyautogui.keyUp('ctrl')
         pyautogui.keyUp('win')
+
+    def set_controller_reference(self, cont):
+        self.controller_reference = cont

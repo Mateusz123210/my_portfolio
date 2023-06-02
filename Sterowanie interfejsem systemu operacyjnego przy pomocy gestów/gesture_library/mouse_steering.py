@@ -40,25 +40,28 @@ class GestureMouseSteering:
             flip_img = cv2.flip(img, 1)
             img_rgb = cv2.cvtColor(flip_img, cv2.COLOR_BGR2RGB)
             results = hands.process(img_rgb)
-            points=[]
+            points = []
             if results.multi_hand_landmarks:
                 for hand_lms in results.multi_hand_landmarks:
                     points.clear()
                     for id, lm in enumerate(hand_lms.landmark):
-                        h, w , c = img.shape
+                        h, w, c = img.shape
                         c_x, c_y = int(lm.x*w), int(lm.y*h)
                         points.append((c_x, c_y))
-                        mp_draw.draw_landmarks(flip_img, hand_lms, mp_hands.HAND_CONNECTIONS)
+                        mp_draw.draw_landmarks(
+                            flip_img, hand_lms, mp_hands.HAND_CONNECTIONS)
                     if points[8][1] < points[5][1] and points[17][0] > points[1][0]:
                         if points[8][0] >= 200 and points[8][0] <= 400 and points[8][1] >= 150 and points[8][1] <= 350:
-                            mouse_x = int(float(points[8][0] - 200) / 200.0 * float(width))
-                            mouse_y = int(float(points[8][1] - 150) / 200.0 * float(height))
+                            mouse_x = int(
+                                float(points[8][0] - 200) / 200.0 * float(width))
+                            mouse_y = int(
+                                float(points[8][1] - 150) / 200.0 * float(height))
                             pyautogui.moveTo(mouse_x, mouse_y)
                         elif points[8][0] >= 400 and points[8][1] >= 350:
                             mouse_x = width - 3
                             mouse_y = height - 3
                             pyautogui.moveTo(mouse_x, mouse_y)
-                        if points[2][0] < points[1][0]and points[3][0] < points[2][0] and points[4][0] < points[3][0]:
+                        if points[2][0] < points[1][0] and points[3][0] < points[2][0] and points[4][0] < points[3][0]:
                             if mouse_click_lock is False:
                                 if math.fabs(mouse_x - mouse_x_before) <= self.sensitivity \
                                         and math.fabs(mouse_y - mouse_y_before) <= self.sensitivity:
@@ -76,7 +79,7 @@ class GestureMouseSteering:
                             right_mouse_click_lock = False
                         mouse_x_before = mouse_x
                         mouse_y_before = mouse_y
-                    elif points[0][1]< points[5][1] and points[5][1] < points[8][1] :
+                    elif points[0][1] < points[5][1] and points[5][1] < points[8][1]:
                         reference.set_time_before()
                         reference.set_end_mouse_message()
                         return
