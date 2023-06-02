@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" prefHeight="750.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #d6efff;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.pwr.cellsmachine.HelloController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+   <children>
+      <AnchorPane fx:id="ap" prefHeight="736.0" prefWidth="860.0" style="-fx-background-color: #d6efff;">
+         <children>
+            <TextField fx:id="selectedScriptTextField" editable="false" layoutX="7.0" layoutY="2.0" prefHeight="25.0" prefWidth="719.0" />
+            <Button layoutX="741.0" layoutY="2.0" mnemonicParsing="false" onAction="#chooseScript" prefHeight="25.0" prefWidth="105.0" text="Load script" />
+            <Button fx:id="simulation" layoutX="690.0" layoutY="334.0" mnemonicParsing="false" onAction="#manageSimulation" prefHeight="42.0" prefWidth="156.0" text="Start simulation" />
+            <Label fx:id="message" layoutX="7.0" layoutY="35.0" prefHeight="17.0" prefWidth="839.0" />
+         </children></AnchorPane>
+   </children>
+</VBox>
