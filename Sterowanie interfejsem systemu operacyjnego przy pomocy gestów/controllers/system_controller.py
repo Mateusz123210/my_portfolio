@@ -11,8 +11,9 @@ class SystemController:
 
     _scroll_speed = 320
 
-    def __init__(self, absolute_path):
+    def __init__(self, absolute_path, win_reference):
         self.absolute_path = absolute_path
+        self.win_reference = win_reference
         self.operating_system_name = platform.system()
         self.camera = None
         self.mouse_steering = None
@@ -23,7 +24,7 @@ class SystemController:
 
     def set_camera_reference(self, camera):
         self.camera = camera
-        self.mouse_steering = GestureMouseSteering(camera)
+        self.mouse_steering = GestureMouseSteering(camera, self.win_reference)
 
     def minimize_window(self):
         user32 = ctypes.WinDLL('user32')

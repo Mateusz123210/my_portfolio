@@ -1,6 +1,5 @@
 import sys
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMainWindow
 from window_app.start_app import StartApp
 from PyQt5.QtGui import QIcon
 from multiprocessing import Process, Event, Value, freeze_support
@@ -23,16 +22,16 @@ class Handy:
         self.ui.close_application()
 
     def start_application(self):
-        from window_app.main_window import Ui_main_window as win
-        self.app = QtWidgets.QApplication(sys.argv)
-        QtWidgets.QApplication.setWindowIcon(
+        from window_app.main_window import MainWindow as win
+        self.app = QApplication(sys.argv)
+        QApplication.setWindowIcon(
             QIcon(self.absolute_path + '/logo.png'))
         self.app.setQuitOnLastWindowClosed(False)
         self.app.lastWindowClosed.connect(self.end_application)
-        self.MainWindow = QtWidgets.QMainWindow()
+        self.MainWindow = QMainWindow()
         if self.v.value == 1:
             return
-        self.ui = win(self.absolute_path)
+        self.ui = win(self.absolute_path, self.app, self.MainWindow)
         self.ui.setupUi(self.MainWindow)
         if self.v.value == 1:
             self.MainWindow.close()

@@ -11,17 +11,21 @@ import time
 
 class GestureRecognition():
 
-    def __init__(self, function_getter, sys_controller, camera_controller):
+    def __init__(self, function_getter, sys_controller, win_reference):
         self.absolute_path = function_getter.get_absolute_path()
         self.position_to_gesture_index = {1: 0, 3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6, 9: 7, 10: 8, 11: 9, 12: 10, 13: 11, 14: 12,
                                           15: 13, 16: 14, 17: 15, 18: 16, 19: 17, 20: 18, 21: 19, 22: 20, 23: 21, 24: 22, 25: 23, 26: 24}
         self.gestures_list = Gestures(self.absolute_path).get_gestures_list()
         self.recognize = True
-        self.cam_controller = camera_controller
-        self.gesture_map = Mapping(function_getter, sys_controller)
+        self.cam_controller = None
+        self.gesture_map = Mapping(
+            function_getter, sys_controller, win_reference)
         self.initialize_recognition()
         self.gesture = None
         self.index = None
+
+    def set_camera_controller(self, cam_controller):
+        self.cam_controller = cam_controller
 
     def get_mapping(self):
         return self.gesture_map
@@ -31,7 +35,7 @@ class GestureRecognition():
 
     def initialize_recognition(self):
         self.model = load_model(self.absolute_path +
-                                '/trained_models/rgblstm.h5')
+                                '/trained_models/model.h5')
         self.model.summary()
         self.rgbinput = Input((150, 100, 3))
         self.x = self.model.layers[1].layer(self.rgbinput)
@@ -44,10 +48,11 @@ class GestureRecognition():
         self.x = self.model.layers[-1](self.x)
         self.lstm = Model(inputs=self.lstminput, outputs=self.x)
         self.lstm.summary()
-        self.q = deque([np.zeros(1024) for i in range(10)])
 
     def start_gesture_recognition(self):
         self.recognize = True
+        self.q = deque([np.zeros(1024) for i in range(10)])
+        self.gesture_map.reset_last_gesture()
         while True:
             if self.recognize is False:
                 return

@@ -37,7 +37,7 @@ class FunctionsGetter():
     def call_function(self, name):
         try:
             self.dct.get(name)()
-        except:
+        except Exception:
             pass
 
     def get_all_functions_names(self):

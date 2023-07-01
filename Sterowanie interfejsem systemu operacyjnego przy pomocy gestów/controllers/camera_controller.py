@@ -41,11 +41,11 @@ class CameraController():
         self.mutex.acquire()
         self.camera_list = self.list_ports()
         contains = False
+        self.win.set_cameras_combo_box(self.camera_list)
         for a in self.camera_list:
             if number == a:
                 contains = True
                 break
-        self.win.set_cameras_combo_box(self.camera_list)
         if contains is True:
             self.used_camera_number = number
             self.cap.release()

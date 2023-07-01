@@ -9,11 +9,18 @@ class Controller():
     def __init__(self, function_getter, sys_controller, win):
         self.mutex = Lock()
         self.win = win
-        self.camera_controller = CameraController(win)
         self.system_controller = sys_controller
         self.gesture_recognition = GestureRecognition(
-            function_getter, sys_controller, self.camera_controller)
+            function_getter, sys_controller, self.win)
+        self.camera_controller = CameraController(self.win)
+        self.gesture_recognition.set_camera_controller(self.camera_controller)
         self.started = False
+
+    def get_started(self):
+        self.mutex.acquire()
+        temp = self.started
+        self.mutex.release()
+        return temp
 
     def start_stop_gesture_recognition(self):
         self.mutex.acquire()
